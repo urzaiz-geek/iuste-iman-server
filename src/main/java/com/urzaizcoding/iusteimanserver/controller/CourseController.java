@@ -23,6 +23,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.urzaizcoding.iusteimanserver.domain.registration.course.Course;
 import com.urzaizcoding.iusteimanserver.dto.CourseDTO;
+import com.urzaizcoding.iusteimanserver.dto.RegistrationDTO;
 import com.urzaizcoding.iusteimanserver.dto.StudentDTO;
 import com.urzaizcoding.iusteimanserver.service.CourseService;
 
@@ -78,7 +79,7 @@ public class CourseController {
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 	
-	public ResponseEntity<Subscription> subscribeToCourse() throws Exception {
+	public ResponseEntity<RegistrationDTO> subscribeToCourse() throws Exception {
 		
 	}
 
