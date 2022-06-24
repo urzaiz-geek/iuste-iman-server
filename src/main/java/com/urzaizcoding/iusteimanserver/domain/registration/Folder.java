@@ -11,24 +11,28 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import com.urzaizcoding.iusteimanserver.domain.registration.course.Course;
+import com.urzaizcoding.iusteimanserver.domain.registration.student.Student;
+
 import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 @Entity(name = "Folder")
 @Table(name = "folder", uniqueConstraints = {
 		@UniqueConstraint(columnNames = "folderRegistrationNumber", name = "FolderRegistrationNumberUniqueConstraint") })
 
-@Data
+@Getter
+@Setter
 @ToString
 @EqualsAndHashCode
 public class Folder {
@@ -54,27 +58,31 @@ public class Folder {
 	@OneToMany(cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH,
 			CascadeType.REMOVE }, fetch = FetchType.LAZY)
 	private Set<Part> parts;
-	
-	@OneToOne(cascade = {CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.REMOVE},fetch = FetchType.EAGER)
+
+	@OneToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH,
+			CascadeType.REMOVE }, fetch = FetchType.EAGER)
 	private Form form;
 
-	@Builder
-	private Folder(Long id, String folderRegistrationNumber, LocalDate creationDate, LocalDate depositDate,
-			Set<Part> parts, Form form) {
+	@OneToOne(mappedBy = "folder")
+	private Student student;
+
+	@ManyToOne
+	private Course course;
+
+	public Folder() {
 		super();
-		this.id = id;
-		this.folderRegistrationNumber = folderRegistrationNumber;
-		this.creationDate = creationDate;
-		this.depositDate = depositDate;
-		this.parts = parts == null? new HashSet<>():parts;
-		this.form = form;
-	}
-	
-	
-	public void addPart(Part part) {
-		if(part != null) {
-			parts.add(part);
-		}
+		this.parts = new HashSet<>();
 	}
 
+	public Part newPart() {
+		Part part = new Part();
+		parts.add(part);
+		return part;
+	}
+	
+	public Quitus newQuitus() {
+		Quitus quitus = new Quitus();
+		parts.add(quitus);
+		return quitus;
+	}
 }

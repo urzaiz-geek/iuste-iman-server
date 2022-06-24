@@ -4,12 +4,12 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class RegistrationDTO {
+public class SubscriptionDTO {
 	private final StudentDTO student;
 	private final CourseDTO course;
 	
 	@Builder
-	private RegistrationDTO(StudentDTO student, CourseDTO course) {
+	private SubscriptionDTO(StudentDTO student, CourseDTO course) {
 		super();
 		this.student = student;
 		this.course = course;

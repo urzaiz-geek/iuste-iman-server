@@ -14,38 +14,41 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
-@Builder
-@Data
+@Entity(name = "Parent")
+@Table(name = "parent", uniqueConstraints = {
+		@UniqueConstraint(columnNames = "contact", name = "ContactUniqueConstraint") })
+@NoArgsConstructor
+@Getter
+@Setter
 @ToString
 @EqualsAndHashCode
-@Entity(name = "Parent")
-@Table(name = "parent", uniqueConstraints = {@UniqueConstraint(columnNames = "contact",name = "ContactUniqueConstraint")})
 public class Parent {
-	
 	@Getter(AccessLevel.NONE)
 	private static final String PARENT_SEQUENCE = "parent_sequence";
-	
+
 	@Id
-	@SequenceGenerator(name = PARENT_SEQUENCE,sequenceName = PARENT_SEQUENCE,allocationSize = 1)
+	@SequenceGenerator(name = PARENT_SEQUENCE, sequenceName = PARENT_SEQUENCE, allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = PARENT_SEQUENCE)
 	@Column(name = "person_id")
 	private Long id;
-	
+
 	@Column(nullable = false, length = 255)
 	private String names;
-	@Column(nullable = false,length = 100)
+	@Column(nullable = false, length = 100)
 	private String job;
-	@Column(nullable = false,length = 15)
+	@Column(nullable = false, length = 15)
 	private String contact;
-	
+
 	@Column(nullable = false, length = 100)
 	private String regionOfOrigin;
 	@Column(nullable = false, length = 1)
 	private ParentAttribute attribute;
-	
+
 	@Column(nullable = false, length = 100)
 	private String place;
-	
+
 }
