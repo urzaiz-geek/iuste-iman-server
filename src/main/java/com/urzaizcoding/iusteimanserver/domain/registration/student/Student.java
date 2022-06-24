@@ -12,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.SequenceGenerators;
 import javax.persistence.Table;
@@ -19,6 +20,7 @@ import javax.persistence.UniqueConstraint;
 
 import com.urzaizcoding.iusteimanserver.domain.Person;
 import com.urzaizcoding.iusteimanserver.domain.Sex;
+import com.urzaizcoding.iusteimanserver.domain.registration.Folder;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -77,6 +79,10 @@ public class Student extends Person {
 			CascadeType.REMOVE }, fetch = FetchType.LAZY)
 	private Set<Parent> parents;
 
+	@OneToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH,
+			CascadeType.REMOVE }, fetch = FetchType.EAGER)
+	private Folder folder;
+
 	@Builder
 	public Student(Long id, String firstName, String lastName, LocalDate birthDate, Sex sex, String birthPlace,
 			String country, String contact, String email, Long studentId, String registrationId, String regionOfOrigin,
@@ -94,14 +100,22 @@ public class Student extends Person {
 		this.frenchLevel = frenchLevel;
 		this.englishLevel = englishLevel;
 		this.photoPath = photoPath;
-		
+
 		parents = new HashSet<>();
 	}
 	
-	public void addParent(Parent parent) {
-		if(parent != null) {
-			parents.add(parent);
+	public void setFolder(Folder folder) {
+		this.folder = folder;
+		folder.setStudent(this);
+	}
+
+	public Parent newParent() throws RuntimeException{
+		if(parents.size() > 3) {
+			throw new RuntimeException("Exceded the parents amount");
 		}
+		Parent parent = new Parent();
+		parents.add(parent);
+		return parent;
 	}
 
 }

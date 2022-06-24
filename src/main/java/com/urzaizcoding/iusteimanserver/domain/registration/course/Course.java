@@ -73,10 +73,10 @@ public class Course {
 		this.folders = folders == null ? new HashSet<>() : folders;
 	}
 	
-	public void addFolder(Folder folder) {
-		if(folder != null) {
-			folders.add(folder);
-		}
+	public Folder newFolder() {
+		Folder folder = new Folder();
+		folders.add(folder);
+		return folder;
 	}
 
 }

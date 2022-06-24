@@ -1,5 +1,6 @@
 package com.urzaizcoding.iusteimanserver.domain.registration;
 
+import java.io.InputStream;
 import java.time.LocalDate;
 
 import javax.persistence.Column;
@@ -20,7 +21,7 @@ import lombok.ToString;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString
-public class Form extends Part{
+public class Form extends Part implements DocumentExportable{
 	
 	@Column(nullable = false,columnDefinition = "DATE")
 	private LocalDate generationDate;
@@ -34,6 +35,11 @@ public class Form extends Part{
 		this.generationDate = generationDate;
 		this.isEditable = isEditable;
 	}
-	
+
+	@Override
+	public InputStream generatePDF() throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}	
 	
 }

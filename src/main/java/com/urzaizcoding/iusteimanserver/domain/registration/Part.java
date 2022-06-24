@@ -13,9 +13,9 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import lombok.AccessLevel;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 @Entity(name = "Part")
@@ -24,7 +24,8 @@ import lombok.ToString;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "part_spec_type", length = 3)
 
-@Data
+@Getter
+@Setter
 @ToString
 @EqualsAndHashCode
 public class Part {
@@ -45,51 +46,5 @@ public class Part {
 	protected String description;
 
 	protected String archivePath;
-
-	protected Part(Long id, String name, String description, String archivePath) {
-		super();
-		this.id = id;
-		this.name = name;
-		this.description = description;
-		this.archivePath = archivePath;
-	}
-	
-	
-	public static PartBuilder parentBuilder() {
-		return new PartBuilder();
-	}
-	
-	public static class PartBuilder {
-		protected Long id;
-		protected String name;
-		protected String description;
-		protected String archivePath;
-		
-		
-		public PartBuilder id(Long id) {
-			this.id = id;
-			return this;
-		}
-		
-		public PartBuilder name(String name) {
-			this.name = name;
-			return this;
-		}
-		
-		public PartBuilder description(String description) {
-			this.description = description;
-			return this;
-		}
-		
-		public PartBuilder archivePath(String archivePath) {
-			this.archivePath = archivePath;
-			return this;
-		}
-		
-		public Part build() {
-			return new Part(id,name,description,archivePath);
-		}
-	}
-	
 	
 }
