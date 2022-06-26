@@ -1,7 +1,6 @@
 package com.urzaizcoding.iusteimanserver.dto;
 
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -17,10 +16,8 @@ public class CourseDTO {
 	@NotNull
 	private final String speciality;
 	@NotNull
-	@Size(min = 9, max = 9)
 	private final String year;
 	@NotNull
-	@Size(max = 5)
 	private final Integer level;
 	
 	@Builder

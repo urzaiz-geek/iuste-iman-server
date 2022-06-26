@@ -1,6 +1,7 @@
 package com.urzaizcoding.iusteimanserver.domain.registration;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -37,6 +38,15 @@ import lombok.ToString;
 @EqualsAndHashCode
 public class Folder {
 
+	private static String FORMAT = "yyyyMMdd-";
+	private static final DateTimeFormatter DATE_FORMATER;
+	private static Integer counterSequence; 
+	
+	static {
+		DATE_FORMATER = DateTimeFormatter.ofPattern(FORMAT);
+		counterSequence = 1;
+	}
+	
 	@Getter(AccessLevel.NONE)
 	private static final String FOLDER_SEQUENCE = "folder_sequence";
 
@@ -49,11 +59,14 @@ public class Folder {
 	@Column(nullable = false, length = 15)
 	private String folderRegistrationNumber;
 
-	@Column(nullable = false, columnDefinition = "DATE")
+	@Column(columnDefinition = "DATE")
 	private LocalDate creationDate;
 
 	@Column(columnDefinition = "DATE")
 	private LocalDate depositDate;
+	
+	@Column(nullable = false)
+	private Boolean validated;
 
 	@OneToMany(cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH,
 			CascadeType.REMOVE }, fetch = FetchType.LAZY)
@@ -84,5 +97,33 @@ public class Folder {
 		Quitus quitus = new Quitus();
 		parts.add(quitus);
 		return quitus;
+	}
+
+	public static String generateNewNumber() {
+		
+		StringBuilder stringBuilder = new StringBuilder();
+		
+		stringBuilder.append(DATE_FORMATER.format(LocalDate.now()));
+		
+		synchronized (Folder.class) {
+			stringBuilder.append(counterSequence++);
+		}
+		
+		return stringBuilder.toString();
+	}
+	
+	public static Folder newFolder() {
+		Folder folder = new Folder();
+		folder.setCreationDate(LocalDate.now());
+		folder.setFolderRegistrationNumber(Folder.generateNewNumber());
+		folder.setValidated(false);
+		folder.setForm(Form.builder()
+				.description("Fiche d'inscription de l'étudiant")
+				.generationDate(LocalDate.now())
+				.isEditable(true)
+				.name("Fiche inscription")
+				.build());
+		
+		return folder;
 	}
 }

@@ -51,8 +51,10 @@ public class ControllersExectionHandler {
 				.statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
 				.date(new Date())
 				.description(request.getDescription(false))
-				.message(ex.getMessage())
+				.message("And unexpected error occured on server please join administrators")
 				.build();
+		//TO-REMOVE
+		ex.printStackTrace();
 		
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(message);
 	}

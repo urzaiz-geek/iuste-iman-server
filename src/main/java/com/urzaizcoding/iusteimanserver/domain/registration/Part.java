@@ -15,6 +15,7 @@ import javax.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -26,10 +27,12 @@ import lombok.ToString;
 
 @Getter
 @Setter
+@NoArgsConstructor
 @ToString
 @EqualsAndHashCode
 public class Part {
 
+	
 	@Getter(AccessLevel.NONE)
 	private static final String PART_SEQUENCE = "part_sequence";
 
@@ -46,5 +49,13 @@ public class Part {
 	protected String description;
 
 	protected String archivePath;
+
+	protected Part(Long id, String name, String description, String archivePath) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.description = description;
+		this.archivePath = archivePath;
+	}
 	
 }

@@ -5,13 +5,14 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,8 +25,8 @@ import lombok.ToString;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
-@EqualsAndHashCode
+@ToString(exclude = {"student"})
+@EqualsAndHashCode(exclude = {"student"})
 public class Parent {
 	@Getter(AccessLevel.NONE)
 	private static final String PARENT_SEQUENCE = "parent_sequence";
@@ -33,22 +34,26 @@ public class Parent {
 	@Id
 	@SequenceGenerator(name = PARENT_SEQUENCE, sequenceName = PARENT_SEQUENCE, allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = PARENT_SEQUENCE)
-	@Column(name = "person_id")
+	@Column(name = "parent_id")
 	private Long id;
 
-	@Column(nullable = false, length = 255)
+	@Column(length = 255)
 	private String names;
-	@Column(nullable = false, length = 100)
+	@Column(length = 100)
 	private String job;
-	@Column(nullable = false, length = 15)
+	@Column(length = 15)
 	private String contact;
 
-	@Column(nullable = false, length = 100)
+	@Column(length = 100)
 	private String regionOfOrigin;
-	@Column(nullable = false, length = 1)
+	@Column(length = 1, unique = true)
 	private ParentAttribute attribute;
 
-	@Column(nullable = false, length = 100)
+	@Column(length = 100)
 	private String place;
+	
+	@ManyToOne
+	@JsonIgnore
+	private Student student;
 
 }

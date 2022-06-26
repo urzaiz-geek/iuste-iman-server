@@ -21,13 +21,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Entity(name = "Course")
 @Table(name = "course")
 @Data
-@ToString
-@EqualsAndHashCode
+@NoArgsConstructor
+@ToString(exclude = {"folders"})
+@EqualsAndHashCode(exclude = {"folders"})
 public class Course {
 
 	@Getter(AccessLevel.NONE)
@@ -54,7 +56,7 @@ public class Course {
 	@Column(nullable = false)
 	private Integer level;
 
-	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH,
+	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.REFRESH,
 			CascadeType.REMOVE }, fetch = FetchType.LAZY)
 	private Set<Folder> folders;
 
@@ -72,11 +74,10 @@ public class Course {
 
 		this.folders = folders == null ? new HashSet<>() : folders;
 	}
-	
-	public Folder newFolder() {
-		Folder folder = new Folder();
-		folders.add(folder);
-		return folder;
+		
+	public void addFolder(Folder newFolder) {
+		newFolder.setCourse(this);
+		folders.add(newFolder);
 	}
 
 }
