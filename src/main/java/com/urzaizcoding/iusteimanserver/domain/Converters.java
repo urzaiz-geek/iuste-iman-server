@@ -7,6 +7,7 @@ import javax.persistence.Converter;
 
 import com.urzaizcoding.iusteimanserver.domain.registration.student.LanguageLevel;
 import com.urzaizcoding.iusteimanserver.domain.registration.student.Level;
+import com.urzaizcoding.iusteimanserver.domain.registration.student.ParentAttribute;
 import com.urzaizcoding.iusteimanserver.domain.user.Role;
 
 
@@ -65,10 +66,10 @@ public class Converters {
 		@Override
 		public String convertToDatabaseColumn(LanguageLevel attribute) {
 			StringBuilder builder = new StringBuilder();
-			builder.append(attribute.getReadLevel());
-			builder.append(attribute.getWriteLevel());
-			builder.append(attribute.getSpeakLevel());
-			builder.append(attribute.getComprehensionLevel());
+			builder.append(attribute.getReadLevel().getCode());
+			builder.append(attribute.getWriteLevel().getCode());
+			builder.append(attribute.getSpeakLevel().getCode());
+			builder.append(attribute.getComprehensionLevel().getCode());
 			
 			return builder.toString();
 		}
@@ -84,5 +85,23 @@ public class Converters {
 					.build();
 		}
 		
+	}
+	
+	@Converter(autoApply = true)
+	public static class ParentAttributeConverter implements AttributeConverter<ParentAttribute, String> {
+
+		@Override
+		public String convertToDatabaseColumn(ParentAttribute attribute) {
+			if(attribute == null)
+				return "";
+			return attribute.getCode();
+		}
+
+		@Override
+		public ParentAttribute convertToEntityAttribute(String dbData) {
+			return Arrays.stream(ParentAttribute.values()).filter(m -> m.getCode().equals(dbData)).findFirst()
+					.orElseThrow(IllegalArgumentException::new);
+		}
+
 	}
 }

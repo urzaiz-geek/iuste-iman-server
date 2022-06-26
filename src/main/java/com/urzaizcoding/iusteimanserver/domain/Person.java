@@ -22,6 +22,7 @@ import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity(name = "Person")
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -29,6 +30,7 @@ import lombok.Getter;
 		@UniqueConstraint(columnNames = "email", name = "EMAIL_UNIQUE_CONSTRAINT"),
 		@UniqueConstraint(columnNames = "contact", name = "CONTACT_UNIQUE_CONSTRAINT") })
 @Data
+@NoArgsConstructor
 @EqualsAndHashCode
 public abstract class Person {
 

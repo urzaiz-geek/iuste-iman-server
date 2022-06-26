@@ -3,6 +3,8 @@ package com.urzaizcoding.iusteimanserver.dto;
 import java.time.LocalDate;
 import java.util.Set;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -16,7 +18,7 @@ import lombok.Getter;
 @Getter
 public class StudentDTO {
 	
-	private Long studentId;
+	private Long id;
 
 	@NotNull
 	private final String firstName;
@@ -38,7 +40,7 @@ public class StudentDTO {
 	@NotNull
 	private final String contact;
 
-	@NotNull
+	@NotNull @Email
 	private final String email;
 
 	private final String registrationId;
@@ -61,15 +63,17 @@ public class StudentDTO {
 	@NotNull
 	private final String countryOfGraduation;
 
-	@NotNull
+	@Valid @NotNull
 	private final LanguageLevel frenchLevel;
 
-	@NotNull
+	@Valid @NotNull
 	private final LanguageLevel englishLevel;
 
 	private final String photoPath;
 
 	private final Set<Parent> parents;
+	
+	
 
 	@Builder
 	private StudentDTO(Long studentId, String firstName, String lastName, LocalDate birthDate, Sex sex,
@@ -78,7 +82,7 @@ public class StudentDTO {
 			String diplomaOption, String countryOfGraduation, LanguageLevel frenchLevel, LanguageLevel englishLevel,
 			String photoPath, Set<Parent> parents) {
 		super();
-		this.studentId = studentId;
+		this.id = studentId;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.birthDate = birthDate;

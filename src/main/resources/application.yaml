@@ -1,20 +1,37 @@
+logging:
+   level:
+      org.hibernate.SQL: DEBUG
+      org.hibernate.type: TRACE
+
 server:
    servlet:
       context-path: /iusteiman/api/v1
 spring:
+    mail:
+       host: smtp.gmail.com
+       port: 587
+       username: ${SPRING_GMAIL_IUSTE_USERNAME}
+       password: ${SPRING_GMAIL_IUSTE_PASSWORD}
+       protocol: smtp
+       tls: true
+       properties.mail.smtp:
+          auth: true
+          starttls.enable: true
+          ssl.trust: smtp.gmail.com
     h2:
        console.enabled: true
     datasource:
-       url: jdbc:postgresql://localhost:5432/iusteimandb
+       url: jdbc:h2:mem:/testdb/iusteimandb
        username: iusteimanuser
-       password: VQsujLXMYpBvHrgDtv7wfCqYTQ95VmZqLAH67YJK67vhL7CAycp@WR26dLyKF3zFSVF346
-       driverClassName: org.postgresql.Driver
+       password: iusteiman
+       driverClassName: org.h2.Driver
     jpa:
-       show-sql: true
+       hibernate:
+             ddl-auto: create-drop
        properties:
           hibernate:
-             dialect: org.hibernate.dialect.PostgreSQLDialect
-             temp:
-                use_jdbc_metadata_defaults: false
-       hibernate:
-          ddl-auto: update
+             show-sql: true
+             generate-ddl: true
+             use_sql_comments: true
+             format_sql: true  
+                    

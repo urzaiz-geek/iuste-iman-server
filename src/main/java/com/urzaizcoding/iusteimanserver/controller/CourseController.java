@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 import javax.validation.Valid;
 
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -35,11 +34,19 @@ import com.urzaizcoding.iusteimanserver.service.CourseService;
 @CrossOrigin("*")
 public class CourseController {
 
-	@Autowired
+	
 	private CourseService courseService;
 
-	@Autowired
+	
 	private ModelMapper mapper;
+	
+	
+
+	public CourseController(CourseService courseService, ModelMapper mapper) {
+		super();
+		this.courseService = courseService;
+		this.mapper = mapper;
+	}
 
 	@GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE })
 	public ResponseEntity<List<CourseDTO>> getAllCourses() {
@@ -55,12 +62,12 @@ public class CourseController {
 			UriComponentsBuilder uriComponentsBuilder) throws Exception {
 
 		Course courseEntity = mapper.map(courseResource, Course.class);
-
+		HttpStatus status = courseEntity.getId() == null? HttpStatus.CREATED:HttpStatus.OK;
 		courseEntity = courseService.addCourse(courseEntity);
 
 		UriComponents uriComponent = uriComponentsBuilder.path("/courses/{id}").buildAndExpand(courseEntity.getId());
 
-		return ResponseEntity.status(HttpStatus.CREATED).header("Location", uriComponent.toUriString())
+		return ResponseEntity.status(status).header("Location", uriComponent.toUriString())
 				.body(mapper.map(courseEntity, CourseDTO.CourseDTOBuilder.class).build());
 	}
 
@@ -87,13 +94,19 @@ public class CourseController {
 	@PostMapping(consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = {
 			MediaType.APPLICATION_JSON_VALUE }, path = "{id}/registrations")
 	public ResponseEntity<StudentDTO> subscribeToCourse(@Valid @RequestBody StudentDTO studentResource,
-			@PathVariable Long courseId, UriComponentsBuilder uriComponentsBuilder) throws Exception {
+			@PathVariable(name = "id") Long courseId, UriComponentsBuilder uriComponentsBuilder) throws Exception {
 		Student studentEntity = mapper.map(studentResource, Student.class);
+		
+		if(studentEntity.getId() == null) {
+			studentEntity = courseService.subscribeStudent(studentEntity, courseId);
+		} else {
+			studentEntity = courseService.updateStudentRegistration(studentEntity, courseId);
+		}
 
-		studentEntity = courseService.subscribeStudent(studentEntity, courseId);
+		
 
-		UriComponents uri = uriComponentsBuilder.path("/courses/{id}/students/{studId}")
-				.buildAndExpand(courseId, studentEntity.getId());
+		UriComponents uri = uriComponentsBuilder.path("/students/{studId}")
+				.buildAndExpand(studentEntity.getId());
 
 		return ResponseEntity.status(HttpStatus.CREATED).header("Location", uri.toUriString())
 				.body(mapper.map(studentEntity, StudentDTO.StudentDTOBuilder.class).build());

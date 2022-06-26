@@ -20,4 +20,6 @@ public interface CourseService {
 	Student subscribeStudent(Student studentEntity, Long id) throws ResourceNotFoundException;
 
 	Folder getRegistrationFolder(String folderRegistrationNumber) throws ResourceNotFoundException;
+
+	Student updateStudentRegistration(Student studentEntity, Long courseId);
 }
