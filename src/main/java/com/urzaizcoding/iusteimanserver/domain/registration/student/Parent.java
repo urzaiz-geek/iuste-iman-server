@@ -2,17 +2,17 @@ package com.urzaizcoding.iusteimanserver.domain.registration.student;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,8 +20,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity(name = "Parent")
-@Table(name = "parent", uniqueConstraints = {
-		@UniqueConstraint(columnNames = "contact", name = "ContactUniqueConstraint") })
+@Table(name = "parent")
 @NoArgsConstructor
 @Getter
 @Setter
@@ -46,14 +45,30 @@ public class Parent {
 
 	@Column(length = 100)
 	private String regionOfOrigin;
-	@Column(length = 1, unique = true)
+	@Column(length = 1)
 	private ParentAttribute attribute;
 
 	@Column(length = 100)
 	private String place;
 	
-	@ManyToOne
-	@JsonIgnore
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "fk_person_student_id",referencedColumnName = "person_id")
 	private Student student;
+
+	@Builder
+	public Parent(Long id, String names, String job, String contact, String regionOfOrigin, ParentAttribute attribute,
+			String place, Student student) {
+		super();
+		this.id = id;
+		this.names = names;
+		this.job = job;
+		this.contact = contact;
+		this.regionOfOrigin = regionOfOrigin;
+		this.attribute = attribute;
+		this.place = place;
+		this.student = student;
+	}
+	
+	
 
 }

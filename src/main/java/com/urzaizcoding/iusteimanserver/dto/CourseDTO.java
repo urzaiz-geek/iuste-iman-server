@@ -1,27 +1,33 @@
 package com.urzaizcoding.iusteimanserver.dto;
 
+import java.util.Set;
+
 import javax.validation.constraints.NotNull;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 
 @Getter
+@NoArgsConstructor
 public class CourseDTO {
-	private final Long id;
+	private Long id;
 	@NotNull
-	private final String faculty;
+	private String faculty;
 	@NotNull
-	private final String cycle;
+	private String cycle;
 	@NotNull
-	private final String speciality;
+	private String speciality;
 	@NotNull
-	private final String year;
+	private String year;
 	@NotNull
-	private final Integer level;
+	private Integer level;
+	
+	private Set<FeesDTO> fees;
 	
 	@Builder
-	private CourseDTO(Long id, String faculty, String cycle, String speciality, String year, Integer level) {
+	private CourseDTO(Long id, String faculty, String cycle, String speciality, String year, Integer level, Set<FeesDTO> fees) {
 		super();
 		this.id = id;
 		this.faculty = faculty;
@@ -29,6 +35,7 @@ public class CourseDTO {
 		this.speciality = speciality;
 		this.year = year;
 		this.level = level;
+		this.fees = fees;
 	}
 	
 	

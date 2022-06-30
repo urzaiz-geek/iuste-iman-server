@@ -1,9 +1,15 @@
 package com.urzaizcoding.iusteimanserver.domain.registration;
 
-import java.io.InputStream;
+import java.io.Serializable;
 
-import javax.persistence.DiscriminatorValue;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import lombok.EqualsAndHashCode;
@@ -13,23 +19,35 @@ import lombok.ToString;
 
 @Entity(name = "Quitus")
 @Table(name = "quitus")
-@DiscriminatorValue("QUI")
 
 @Getter
 @Setter
 @ToString(callSuper = true)
-@EqualsAndHashCode(callSuper = true)
-public class Quitus extends Part implements DocumentExportable{
+@EqualsAndHashCode
+public class Quitus implements Serializable{
 	
-	private String cause;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6647152144067443404L;
+
+	private static final String QUITUS_SEQUENCE = "quitus_sequence";
+
+	@Id
+	@SequenceGenerator(name = QUITUS_SEQUENCE, sequenceName = QUITUS_SEQUENCE, allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = QUITUS_SEQUENCE)
+	@Column(name = "quitus_id")
+	private Long id;
+	
+	@Column(length = 150)
+	private String object;
 	private Boolean status;
 	private Integer amount;
+	@Column(length = 150)
 	private String paiementPlace;
-	@Override
-	public InputStream generatePDF() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
+	@ManyToOne(fetch = FetchType.EAGER)
+	private Folder folder;
 	
 	
 }
