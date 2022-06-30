@@ -10,68 +10,69 @@ import javax.validation.constraints.Size;
 
 import com.urzaizcoding.iusteimanserver.domain.Sex;
 import com.urzaizcoding.iusteimanserver.domain.registration.student.LanguageLevel;
-import com.urzaizcoding.iusteimanserver.domain.registration.student.Parent;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 public class StudentDTO {
 	
 	private Long id;
 
 	@NotNull
-	private final String firstName;
+	private String firstName;
 
-	private final String lastName;
+	private String lastName;
 
 	@NotNull
-	private final LocalDate birthDate;
+	private  LocalDate birthDate;
 	
 	@NotNull
-	private final Sex sex;
+	private  Sex sex;
 
 	@NotNull
-	private final String birthPlace;
+	private  String birthPlace;
 
 	@NotNull
-	private final String country;
+	private  String country;
 
 	@NotNull
-	private final String contact;
+	private  String contact;
 
 	@NotNull @Email
-	private final String email;
+	private  String email;
 
-	private final String registrationId;
-
-	@NotNull
-	private final String regionOfOrigin;
+	private  String registrationId;
 
 	@NotNull
-	private final String entranceDiploma;
+	private  String regionOfOrigin;
+
+	@NotNull
+	private  String entranceDiploma;
 
 	@NotNull
 	@Size(max = 4)
-	private final String yearOfGraduation;
+	private  String yearOfGraduation;
 
 	@NotNull
-	private final String schoolOfGraduation;
+	private  String schoolOfGraduation;
 	
-	private final String diplomaOption;
+	private  String diplomaOption;
 
 	@NotNull
-	private final String countryOfGraduation;
+	private  String countryOfGraduation;
 
 	@Valid @NotNull
-	private final LanguageLevel frenchLevel;
+	private  LanguageLevel frenchLevel;
 
 	@Valid @NotNull
-	private final LanguageLevel englishLevel;
+	private  LanguageLevel englishLevel;
 
-	private final String photoPath;
+	private  String photoPath;
 
-	private final Set<Parent> parents;
+	private  Set<ParentDTO> parents;
 	
 	
 
@@ -80,7 +81,7 @@ public class StudentDTO {
 			String birthPlace, String country, String contact, String email, String registrationId,
 			String regionOfOrigin, String entranceDiploma, String yearOfGraduation, String schoolOfGraduation,
 			String diplomaOption, String countryOfGraduation, LanguageLevel frenchLevel, LanguageLevel englishLevel,
-			String photoPath, Set<Parent> parents) {
+			String photoPath, Set<ParentDTO> parents) {
 		super();
 		this.id = studentId;
 		this.firstName = firstName;

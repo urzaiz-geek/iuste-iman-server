@@ -1,12 +1,10 @@
 package com.urzaizcoding.iusteimanserver.domain.registration;
 
-import java.io.InputStream;
+import java.io.Serializable;
 import java.time.LocalDate;
 
 import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.Embeddable;
 
 import lombok.Builder;
 import lombok.Data;
@@ -15,33 +13,30 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 
-@Entity(name = "Form")
-@Table(name = "form")
-@DiscriminatorValue("FOR")
+
+
+@Embeddable
 
 @Data
 @NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode
 @ToString
-public class Form extends Part implements DocumentExportable{
+public class Form implements Serializable{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7562577602401391699L;
+
 	@Column(nullable = false,columnDefinition = "DATE")
 	private LocalDate generationDate;
 	
 	private Boolean isEditable;
 
 	@Builder
-	public Form(Long id, String name, String description, String archivePath, LocalDate generationDate,
+	public Form(LocalDate generationDate,
 			Boolean isEditable) {
-		super(id, name, description, archivePath);
 		this.generationDate = generationDate;
 		this.isEditable = isEditable;
 	}
-
-	@Override
-	public InputStream generatePDF() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}	
-	
 }

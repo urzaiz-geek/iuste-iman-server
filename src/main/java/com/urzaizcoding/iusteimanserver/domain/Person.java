@@ -1,5 +1,6 @@
 package com.urzaizcoding.iusteimanserver.domain;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
 import javax.persistence.CascadeType;
@@ -32,7 +33,12 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode
-public abstract class Person {
+public abstract class Person implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4092264304611497017L;
 
 	@Getter(AccessLevel.NONE)
 	protected static final String PERSON_SEQUENCE = "person_sequence";

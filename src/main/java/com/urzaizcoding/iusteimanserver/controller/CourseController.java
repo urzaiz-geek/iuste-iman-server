@@ -1,11 +1,15 @@
 package com.urzaizcoding.iusteimanserver.controller;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -25,8 +29,9 @@ import com.urzaizcoding.iusteimanserver.domain.registration.Folder;
 import com.urzaizcoding.iusteimanserver.domain.registration.course.Course;
 import com.urzaizcoding.iusteimanserver.domain.registration.student.Student;
 import com.urzaizcoding.iusteimanserver.dto.CourseDTO;
+import com.urzaizcoding.iusteimanserver.dto.FolderDTO;
 import com.urzaizcoding.iusteimanserver.dto.StudentDTO;
-import com.urzaizcoding.iusteimanserver.dto.SubscriptionDTO;
+import com.urzaizcoding.iusteimanserver.mappers.MapStructMapper;
 import com.urzaizcoding.iusteimanserver.service.CourseService;
 
 @RestController
@@ -34,13 +39,12 @@ import com.urzaizcoding.iusteimanserver.service.CourseService;
 @CrossOrigin("*")
 public class CourseController {
 
-	
 	private CourseService courseService;
 
-	
 	private ModelMapper mapper;
 	
-	
+	@Autowired
+	private MapStructMapper mapStructMapper;
 
 	public CourseController(CourseService courseService, ModelMapper mapper) {
 		super();
@@ -53,7 +57,7 @@ public class CourseController {
 
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(courseService.getAllCourses().stream()
-						.map(course -> mapper.map(course, CourseDTO.CourseDTOBuilder.class).build())
+						.map(course -> mapStructMapper.courseToCourseDTO(course))
 						.collect(Collectors.toList()));
 	}
 
@@ -62,22 +66,21 @@ public class CourseController {
 			UriComponentsBuilder uriComponentsBuilder) throws Exception {
 
 		Course courseEntity = mapper.map(courseResource, Course.class);
-		HttpStatus status = courseEntity.getId() == null? HttpStatus.CREATED:HttpStatus.OK;
-		courseEntity = courseService.addCourse(courseEntity);
+		courseEntity.setId(null);
+		courseEntity = courseService.saveCourse(courseEntity);
 
 		UriComponents uriComponent = uriComponentsBuilder.path("/courses/{id}").buildAndExpand(courseEntity.getId());
 
-		return ResponseEntity.status(status).header("Location", uriComponent.toUriString())
+		return ResponseEntity.status(HttpStatus.CREATED).header("Location", uriComponent.toUriString())
 				.body(mapper.map(courseEntity, CourseDTO.CourseDTOBuilder.class).build());
 	}
 
-	@PutMapping(consumes = { MediaType.APPLICATION_JSON_VALUE })
-	public ResponseEntity<CourseDTO> editCourse(@Valid @RequestBody CourseDTO courseResource)
-			throws Exception {
+	@PutMapping(consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
+	public ResponseEntity<CourseDTO> editCourse(@Valid @RequestBody CourseDTO courseResource) throws Exception {
 
 		Course courseEntity = mapper.map(courseResource, Course.class);
 
-		courseEntity = courseService.updateCourse(courseEntity);
+		courseEntity = courseService.saveCourse(courseEntity);
 
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(mapper.map(courseEntity, CourseDTO.CourseDTOBuilder.class).build());
@@ -96,35 +99,44 @@ public class CourseController {
 	public ResponseEntity<StudentDTO> subscribeToCourse(@Valid @RequestBody StudentDTO studentResource,
 			@PathVariable(name = "id") Long courseId, UriComponentsBuilder uriComponentsBuilder) throws Exception {
 		Student studentEntity = mapper.map(studentResource, Student.class);
-		
-		if(studentEntity.getId() == null) {
-			studentEntity = courseService.subscribeStudent(studentEntity, courseId);
-		} else {
-			studentEntity = courseService.updateStudentRegistration(studentEntity, courseId);
+
+		if (studentEntity.getId() != null) {
+			studentEntity.setId(null);
 		}
 
-		
+		studentEntity = courseService.subscribeStudent(studentEntity, courseId);
 
-		UriComponents uri = uriComponentsBuilder.path("/students/{studId}")
-				.buildAndExpand(studentEntity.getId());
+		UriComponents uri = uriComponentsBuilder.path("/courses/{id}/registrations/{studId}").buildAndExpand(courseId,
+				studentEntity.getId());
 
 		return ResponseEntity.status(HttpStatus.CREATED).header("Location", uri.toUriString())
 				.body(mapper.map(studentEntity, StudentDTO.StudentDTOBuilder.class).build());
 
 	}
-	
-	@GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE}, path = "registrations/{folderRegistrationNumber}")
-	public ResponseEntity<SubscriptionDTO> getSubscription(@PathVariable String folderRegistrationNumber) throws Exception{
-		
-		Folder folderEntity = courseService.getRegistrationFolder(folderRegistrationNumber);
-		
-		CourseDTO courseResource = mapper.map(folderEntity.getCourse(), CourseDTO.CourseDTOBuilder.class).build();
-		StudentDTO studentResource = mapper.map(folderEntity.getStudent(), StudentDTO.StudentDTOBuilder.class).build();
-		
-		return ResponseEntity.status(HttpStatus.OK).body(SubscriptionDTO.builder()
-				.course(courseResource)
-				.student(studentResource)
-				.build());
+
+	@PutMapping(consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = {
+			MediaType.APPLICATION_JSON_VALUE }, path = "{id}/registrations")
+	public ResponseEntity<StudentDTO> updateSubscription(@Valid @RequestBody StudentDTO studentResource,
+			@PathVariable(name = "id") Long courseId) throws Exception {
+
+		Student studentEntity = mapper.map(studentResource, Student.class);
+
+		studentEntity = courseService.updateSubscription(studentEntity, courseId);
+
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(mapper.map(studentEntity, StudentDTO.StudentDTOBuilder.class).build());
 	}
 
+	@GetMapping(produces = {
+			MediaType.APPLICATION_JSON_VALUE }, path = "{id}/folders")
+	public ResponseEntity<List<FolderDTO>> getFoldersForCourse(@PathVariable(name = "id") @NotNull @NotBlank Long courseId)
+			throws Exception {
+
+		Set<Folder> folders = courseService.getFoldersOfCourse(courseId);
+
+		List<FolderDTO> folderResources = folders.stream()
+				.map(f -> mapper.map(f, FolderDTO.FolderDTOBuilder.class).build()).collect(Collectors.toList());
+
+		return ResponseEntity.ok(folderResources);
+	}
 }

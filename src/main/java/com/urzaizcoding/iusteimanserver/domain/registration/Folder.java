@@ -1,12 +1,15 @@
 package com.urzaizcoding.iusteimanserver.domain.registration;
 
+import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -35,18 +38,23 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-@EqualsAndHashCode
-public class Folder {
+@EqualsAndHashCode(exclude = { "course" })
+public class Folder implements Serializable {
 
-	private static String FORMAT = "yyyyMMdd-";
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2330883772397945628L;
+
+	private static String FORMAT = "yyyyMMdd-hhmm-";
 	private static final DateTimeFormatter DATE_FORMATER;
-	private static Integer counterSequence; 
-	
+	private static Integer counterSequence;
+
 	static {
 		DATE_FORMATER = DateTimeFormatter.ofPattern(FORMAT);
 		counterSequence = 1;
 	}
-	
+
 	@Getter(AccessLevel.NONE)
 	private static final String FOLDER_SEQUENCE = "folder_sequence";
 
@@ -60,31 +68,35 @@ public class Folder {
 	private String folderRegistrationNumber;
 
 	@Column(columnDefinition = "DATE")
-	private LocalDate creationDate;
+	private LocalDateTime creationDate;
 
 	@Column(columnDefinition = "DATE")
 	private LocalDate depositDate;
-	
+
 	@Column(nullable = false)
 	private Boolean validated;
 
-	@OneToMany(cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH,
-			CascadeType.REMOVE }, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "folder", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH,
+			CascadeType.REMOVE }, orphanRemoval = true)
 	private Set<Part> parts;
 
-	@OneToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH,
-			CascadeType.REMOVE }, fetch = FetchType.EAGER)
+	@Embedded
 	private Form form;
 
-	@OneToOne(mappedBy = "folder")
+	@OneToMany(mappedBy = "folder", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH,
+			CascadeType.REMOVE }, orphanRemoval = true)
+	private Set<Quitus> quitus;
+
+	@OneToOne(mappedBy = "folder",fetch = FetchType.LAZY)
 	private Student student;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	private Course course;
 
 	public Folder() {
 		super();
 		this.parts = new HashSet<>();
+		this.quitus = new HashSet<>();
 	}
 
 	public Part newPart() {
@@ -92,38 +104,23 @@ public class Folder {
 		parts.add(part);
 		return part;
 	}
-	
+
 	public Quitus newQuitus() {
-		Quitus quitus = new Quitus();
-		parts.add(quitus);
-		return quitus;
+		Quitus nquitus = new Quitus();
+		quitus.add(nquitus);
+		return nquitus;
 	}
 
 	public static String generateNewNumber() {
-		
+
 		StringBuilder stringBuilder = new StringBuilder();
-		
-		stringBuilder.append(DATE_FORMATER.format(LocalDate.now()));
-		
+
+		stringBuilder.append(DATE_FORMATER.format(LocalDateTime.now()));
+
 		synchronized (Folder.class) {
 			stringBuilder.append(counterSequence++);
 		}
-		
+
 		return stringBuilder.toString();
-	}
-	
-	public static Folder newFolder() {
-		Folder folder = new Folder();
-		folder.setCreationDate(LocalDate.now());
-		folder.setFolderRegistrationNumber(Folder.generateNewNumber());
-		folder.setValidated(false);
-		folder.setForm(Form.builder()
-				.description("Fiche d'inscription de l'étudiant")
-				.generationDate(LocalDate.now())
-				.isEditable(true)
-				.name("Fiche inscription")
-				.build());
-		
-		return folder;
 	}
 }

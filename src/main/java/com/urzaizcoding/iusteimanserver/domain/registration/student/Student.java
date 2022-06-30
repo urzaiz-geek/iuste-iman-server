@@ -2,7 +2,7 @@ package com.urzaizcoding.iusteimanserver.domain.registration.student;
 
 import java.time.LocalDate;
 import java.util.HashSet;
-import java.util.Optional;
+import java.util.Iterator;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -18,9 +18,11 @@ import com.urzaizcoding.iusteimanserver.domain.Person;
 import com.urzaizcoding.iusteimanserver.domain.Sex;
 import com.urzaizcoding.iusteimanserver.domain.registration.Folder;
 
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
@@ -32,6 +34,12 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = true, exclude = { "folder", "parents" })
 @ToString(callSuper = true, exclude = "folder")
 public class Student extends Person {
+
+	/**
+	 * 
+	 */
+	@Getter(value = AccessLevel.NONE)
+	private static final long serialVersionUID = 4995948429578480105L;
 
 	@Column(nullable = true, length = 15)
 	private String registrationId;
@@ -62,18 +70,18 @@ public class Student extends Person {
 
 	private String photoPath;
 
-	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.REMOVE,
-			CascadeType.MERGE }, fetch = FetchType.LAZY, orphanRemoval = true)
+	@OneToMany(mappedBy = "student", cascade = { CascadeType.ALL }, orphanRemoval = true, fetch = FetchType.LAZY)
 	private Set<Parent> parents;
 
-	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.REMOVE })
+	@OneToOne(fetch = FetchType.LAZY)
 	private Folder folder;
 
 	@Builder
 	public Student(Long id, String firstName, String lastName, LocalDate birthDate, Sex sex, String birthPlace,
 			String country, String contact, String email, String registrationId, String regionOfOrigin,
 			String entranceDiploma, String yearOfGraduation, String schoolOfGraduation, String diplomaOption,
-			String countryOfGraduation, LanguageLevel frenchLevel, LanguageLevel englishLevel, String photoPath) {
+			String countryOfGraduation, LanguageLevel frenchLevel, LanguageLevel englishLevel, String photoPath,
+			Set<Parent> parents) {
 		super(id, firstName, lastName, birthDate, sex, birthPlace, country, contact, email);
 		this.registrationId = registrationId;
 		this.regionOfOrigin = regionOfOrigin;
@@ -86,48 +94,60 @@ public class Student extends Person {
 		this.englishLevel = englishLevel;
 		this.photoPath = photoPath;
 
-		parents = new HashSet<>();
+		this.parents = parents == null ? new HashSet<>() : parents;
 	}
 
 	public void setFolder(Folder folder) {
+		if (this.folder == null) {
+			this.folder = folder;
+			return;
+		}
 		this.folder = folder;
 		folder.setStudent(this);
 	}
 
 	public void addParent(Parent newParent) {
 		if (this.parents.size() < 3) {
-			Optional<Parent> p = this.parents.stream().filter(tp -> tp.getContact().equals(newParent.getContact()))
-					.findFirst();
-			if (p.isPresent()) {
-				p.get().setAttribute(newParent.getAttribute());
-				p.get().setContact(newParent.getContact());
-				p.get().setJob(newParent.getJob());
-				p.get().setNames(newParent.getNames());
-				p.get().setPlace(newParent.getPlace());
-				p.get().setRegionOfOrigin(newParent.getRegionOfOrigin());
-			} else {
-				parents.add(newParent);
-				newParent.setStudent(this);
-			}
-		} else {
-			Parent p = this.parents.stream().filter(tp -> tp.getContact().equals(newParent.getContact())).findFirst()
-					.get();
-
-			if (p == null) {
-				p = this.parents.stream().filter(tp -> tp.getAttribute().equals(newParent.getAttribute())).findFirst()
-						.get();
-
-				p.setContact(newParent.getContact());
-				p.setJob(newParent.getJob());
-				p.setNames(newParent.getNames());
-				p.setPlace(newParent.getPlace());
-				p.setRegionOfOrigin(newParent.getRegionOfOrigin());
-			}
+			newParent.setStudent(this);
+			parents.add(newParent);
 		}
 	}
 
 	public void clearParents() {
-		this.parents.clear();
+		Iterator<Parent> iterator = this.parents.iterator();
+
+		while (iterator.hasNext()) {
+			Parent item = iterator.next();
+			item.setStudent(null);
+			iterator.remove();
+		}
+	}
+
+	public void updateFromOther(Student studentEntity) {
+
+		this.setBirthDate(studentEntity.getBirthDate());
+		this.setBirthPlace(studentEntity.getBirthPlace());
+		this.setContact(studentEntity.getContact());
+		this.setCountry(studentEntity.getCountry());
+		this.setCountryOfGraduation(studentEntity.getCountryOfGraduation());
+		this.setDiplomaOption(studentEntity.getDiplomaOption());
+		this.setEmail(studentEntity.getEmail());
+		this.setEnglishLevel(studentEntity.getEnglishLevel());
+		this.setEntranceDiploma(studentEntity.getEntranceDiploma());
+		this.setFirstName(studentEntity.getFirstName());
+		this.setFrenchLevel(studentEntity.getFrenchLevel());
+		this.setLastName(studentEntity.getLastName());
+		this.setPhotoPath(studentEntity.getPhotoPath());
+		this.setRegionOfOrigin(studentEntity.getRegionOfOrigin());
+		this.setSchoolOfGraduation(studentEntity.getSchoolOfGraduation());
+		this.setSex(studentEntity.getSex());
+		this.setYearOfGraduation(studentEntity.getYearOfGraduation());
+		studentEntity.getParents().forEach(p -> this.addParent(p));
+
+	}
+
+	public void updateParents() {
+		this.parents.stream().forEach(p -> p.setStudent(this));
 	}
 
 }

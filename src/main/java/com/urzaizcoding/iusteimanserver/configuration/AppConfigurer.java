@@ -13,7 +13,12 @@ public class AppConfigurer {
 	ModelMapper modelMapper() {
 		ModelMapper mapper = new ModelMapper();
 
-		mapper.getConfiguration().setFieldMatchingEnabled(true).setFieldAccessLevel(AccessLevel.PRIVATE);
+		mapper.getConfiguration()
+			.setFieldMatchingEnabled(true)
+			.setFieldAccessLevel(AccessLevel.PRIVATE)
+			.setAmbiguityIgnored(true);
+		
+		
 
 		return mapper;
 	}

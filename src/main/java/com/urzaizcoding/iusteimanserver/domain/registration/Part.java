@@ -1,13 +1,19 @@
 package com.urzaizcoding.iusteimanserver.domain.registration;
 
+import java.io.Serializable;
+import java.time.LocalDate;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -30,9 +36,13 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 @EqualsAndHashCode
-public class Part {
+public class Part implements Serializable{
 
 	
+
+	@Getter(value = AccessLevel.NONE)
+	private static final long serialVersionUID = -5661275494800687333L;
+
 	@Getter(AccessLevel.NONE)
 	private static final String PART_SEQUENCE = "part_sequence";
 
@@ -40,22 +50,40 @@ public class Part {
 	@SequenceGenerator(name = PART_SEQUENCE, sequenceName = PART_SEQUENCE, allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = PART_SEQUENCE)
 	@Column(name = "part_id")
-	protected Long id;
+	private Long id;
 
 	@Column(nullable = false, length = 100)
-	protected String name;
+	private String name;
 
 	@Column(columnDefinition = "TEXT")
-	protected String description;
+	private String description;
+	
+	@Column(length = 10)
+	private String fileType;
+	
+	@Column(columnDefinition = "DATE")
+	private LocalDate uploadDate;
+	
+	@Column
+	private Long size;
 
-	protected String archivePath;
+	private String archivePath;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	private Folder folder;
 
-	protected Part(Long id, String name, String description, String archivePath) {
+	public Part(Long id, String name, String description, String fileType, LocalDate uploadDate, Long size,
+			String archivePath) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.description = description;
+		this.fileType = fileType;
+		this.uploadDate = uploadDate;
+		this.size = size;
 		this.archivePath = archivePath;
 	}
+
+	
 	
 }

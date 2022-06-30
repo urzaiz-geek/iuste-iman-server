@@ -5,6 +5,7 @@ import java.util.Arrays;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
+import com.urzaizcoding.iusteimanserver.domain.registration.course.FeesType;
 import com.urzaizcoding.iusteimanserver.domain.registration.student.LanguageLevel;
 import com.urzaizcoding.iusteimanserver.domain.registration.student.Level;
 import com.urzaizcoding.iusteimanserver.domain.registration.student.ParentAttribute;
@@ -55,6 +56,22 @@ public class Converters {
 		@Override
 		public Role convertToEntityAttribute(String dbData) {
 			return Arrays.stream(Role.values()).filter(m -> m.getCode().equals(dbData)).findFirst()
+					.orElseThrow(IllegalArgumentException::new);
+		}
+
+	}
+	
+	@Converter(autoApply = true)
+	public static class FeesTypeConverter implements AttributeConverter<FeesType, String> {
+
+		@Override
+		public String convertToDatabaseColumn(FeesType attribute) {
+			return attribute.getCode();
+		}
+
+		@Override
+		public FeesType convertToEntityAttribute(String dbData) {
+			return Arrays.stream(FeesType.values()).filter(m -> m.getCode().equals(dbData)).findFirst()
 					.orElseThrow(IllegalArgumentException::new);
 		}
 

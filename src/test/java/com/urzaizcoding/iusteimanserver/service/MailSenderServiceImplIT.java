@@ -35,12 +35,14 @@ class MailSenderServiceImplIT {
 			"urzaizgithub@proton.me","urzaizgithub@aol.com" })
 	void shouldSendAndEmailToAStudentWithGmail(String email) throws Exception{
 		// given
+		Folder folder = new Folder();
+		folder.setFolderRegistrationNumber(Folder.generateNewNumber());
 		Student student = Student.builder().firstName("Ghenhagne Gueboussi")
 				.lastName("Trésor Chavaquiha")
 				.sex(Sex.MALE)
 				.email(email)
 				.build();
-		student.setFolder(Folder.newFolder());
+		student.setFolder(folder);
 		
 		// when
 		
