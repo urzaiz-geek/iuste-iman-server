@@ -8,14 +8,13 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -29,61 +28,65 @@ import com.urzaizcoding.iusteimanserver.domain.registration.Folder;
 import com.urzaizcoding.iusteimanserver.domain.registration.course.Course;
 import com.urzaizcoding.iusteimanserver.domain.registration.student.Student;
 import com.urzaizcoding.iusteimanserver.dto.CourseDTO;
-import com.urzaizcoding.iusteimanserver.dto.FolderDTO;
+import com.urzaizcoding.iusteimanserver.dto.CourseDTOLigth;
+import com.urzaizcoding.iusteimanserver.dto.FolderDTOLigth;
 import com.urzaizcoding.iusteimanserver.dto.StudentDTO;
 import com.urzaizcoding.iusteimanserver.mappers.MapStructMapper;
 import com.urzaizcoding.iusteimanserver.service.CourseService;
 
 @RestController
-@RequestMapping("/courses")
+@RequestMapping(path = "/courses", produces = { MediaType.APPLICATION_JSON_VALUE })
 @CrossOrigin("*")
 public class CourseController {
 
-	private CourseService courseService;
+	private final CourseService courseService;
 
-	private ModelMapper mapper;
-	
-	@Autowired
-	private MapStructMapper mapStructMapper;
+	private final MapStructMapper mapper;
 
-	public CourseController(CourseService courseService, ModelMapper mapper) {
+	public CourseController(CourseService courseService, MapStructMapper mapper) {
 		super();
 		this.courseService = courseService;
 		this.mapper = mapper;
 	}
 
-	@GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE })
-	public ResponseEntity<List<CourseDTO>> getAllCourses() {
+	@GetMapping
+	public ResponseEntity<List<CourseDTOLigth>> getAllCourses() {
 
-		return ResponseEntity.status(HttpStatus.OK)
-				.body(courseService.getAllCourses().stream()
-						.map(course -> mapStructMapper.courseToCourseDTO(course))
-						.collect(Collectors.toList()));
+		return ResponseEntity.status(HttpStatus.OK).body(courseService.getAllCourses().stream()
+				.map(course -> mapper.courseToCourseDTOLigth(course)).collect(Collectors.toList()));
 	}
 
-	@PostMapping(consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
+	@GetMapping(path = "{id}")
+	public ResponseEntity<CourseDTO> getSpecifiedCourse(Long id) throws Exception {
+		Course courseEntity = courseService.findSpecifiedCourse(id);
+		return ResponseEntity.ok(mapper.courseToCourseDTO(courseEntity));
+	}
+
+	@PostMapping(consumes = { MediaType.APPLICATION_JSON_VALUE })
 	public ResponseEntity<CourseDTO> createCourse(@Valid @RequestBody CourseDTO courseResource,
 			UriComponentsBuilder uriComponentsBuilder) throws Exception {
 
-		Course courseEntity = mapper.map(courseResource, Course.class);
+		Course courseEntity = mapper.courseDTOToCourse(courseResource);
 		courseEntity.setId(null);
 		courseEntity = courseService.saveCourse(courseEntity);
 
 		UriComponents uriComponent = uriComponentsBuilder.path("/courses/{id}").buildAndExpand(courseEntity.getId());
 
 		return ResponseEntity.status(HttpStatus.CREATED).header("Location", uriComponent.toUriString())
-				.body(mapper.map(courseEntity, CourseDTO.CourseDTOBuilder.class).build());
+				.body(mapper.courseToCourseDTO(courseEntity));
 	}
 
-	@PutMapping(consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
-	public ResponseEntity<CourseDTO> editCourse(@Valid @RequestBody CourseDTO courseResource) throws Exception {
+	@PutMapping(consumes = { MediaType.APPLICATION_JSON_VALUE }, path = "{id}")
+	public ResponseEntity<CourseDTO> editCourse(@PathVariable(name = "id") @NotNull Long courseId,
+			@Valid @RequestBody CourseDTO courseResource) throws Exception {
 
-		Course courseEntity = mapper.map(courseResource, Course.class);
+		Course courseEntity = mapper.courseDTOToCourse(courseResource);
+
+		courseEntity.setId(courseId);
 
 		courseEntity = courseService.saveCourse(courseEntity);
 
-		return ResponseEntity.status(HttpStatus.OK)
-				.body(mapper.map(courseEntity, CourseDTO.CourseDTOBuilder.class).build());
+		return ResponseEntity.status(HttpStatus.OK).body(mapper.courseToCourseDTO(courseEntity));
 
 	}
 
@@ -94,11 +97,10 @@ public class CourseController {
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 
-	@PostMapping(consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = {
-			MediaType.APPLICATION_JSON_VALUE }, path = "{id}/registrations")
+	@PostMapping(consumes = { MediaType.APPLICATION_JSON_VALUE }, path = "{id}/registrations")
 	public ResponseEntity<StudentDTO> subscribeToCourse(@Valid @RequestBody StudentDTO studentResource,
 			@PathVariable(name = "id") Long courseId, UriComponentsBuilder uriComponentsBuilder) throws Exception {
-		Student studentEntity = mapper.map(studentResource, Student.class);
+		Student studentEntity = mapper.studentDTOToStudent(studentResource);
 
 		if (studentEntity.getId() != null) {
 			studentEntity.setId(null);
@@ -110,33 +112,41 @@ public class CourseController {
 				studentEntity.getId());
 
 		return ResponseEntity.status(HttpStatus.CREATED).header("Location", uri.toUriString())
-				.body(mapper.map(studentEntity, StudentDTO.StudentDTOBuilder.class).build());
+				.body(mapper.studentToStudentDTO(studentEntity));
 
 	}
 
-	@PutMapping(consumes = { MediaType.APPLICATION_JSON_VALUE }, produces = {
-			MediaType.APPLICATION_JSON_VALUE }, path = "{id}/registrations")
+	@PutMapping(consumes = { MediaType.APPLICATION_JSON_VALUE }, path = "{courseId}/registrations/{studentId}")
 	public ResponseEntity<StudentDTO> updateSubscription(@Valid @RequestBody StudentDTO studentResource,
-			@PathVariable(name = "id") Long courseId) throws Exception {
+			@PathVariable(name = "courseId") Long courseId, @PathVariable(name = "studentId") Long id) throws Exception {
 
-		Student studentEntity = mapper.map(studentResource, Student.class);
+		Student studentEntity = mapper.studentDTOToStudent(studentResource);
+		
+		studentEntity.setId(id);
 
 		studentEntity = courseService.updateSubscription(studentEntity, courseId);
 
-		return ResponseEntity.status(HttpStatus.OK)
-				.body(mapper.map(studentEntity, StudentDTO.StudentDTOBuilder.class).build());
+		return ResponseEntity.status(HttpStatus.OK).body(mapper.studentToStudentDTO(studentEntity));
 	}
 
-	@GetMapping(produces = {
-			MediaType.APPLICATION_JSON_VALUE }, path = "{id}/folders")
-	public ResponseEntity<List<FolderDTO>> getFoldersForCourse(@PathVariable(name = "id") @NotNull @NotBlank Long courseId)
-			throws Exception {
+	@GetMapping(path = "{id}/folders")
+	public ResponseEntity<List<FolderDTOLigth>> getFoldersForCourse(
+			@PathVariable(name = "id") @NotNull @NotBlank Long courseId) throws Exception {
 
 		Set<Folder> folders = courseService.getFoldersOfCourse(courseId);
 
-		List<FolderDTO> folderResources = folders.stream()
-				.map(f -> mapper.map(f, FolderDTO.FolderDTOBuilder.class).build()).collect(Collectors.toList());
+		List<FolderDTOLigth> folderResources = folders.stream().map(f -> mapper.folderToFolderDTOLight(f))
+				.collect(Collectors.toList());
 
 		return ResponseEntity.ok(folderResources);
+	}
+
+	@PatchMapping(consumes = { MediaType.APPLICATION_JSON_VALUE }, path = { "{id}/status" })
+	public ResponseEntity<CourseDTOLigth> editCourseStatus(@NotNull @Valid @RequestBody CourseDTOLigth courseResource,
+			@NotNull @PathVariable(name = "id") Long courseId) {
+		
+		Course courseEntity = courseService.editCourseStatus(courseResource.getIsOpen(), courseId);
+		
+		return ResponseEntity.ok(mapper.courseToCourseDTOLigth(courseEntity));
 	}
 }

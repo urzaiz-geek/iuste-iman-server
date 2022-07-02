@@ -38,7 +38,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-@EqualsAndHashCode(exclude = { "course" })
+@EqualsAndHashCode(exclude = { "course","parts","quitus" })
 public class Folder implements Serializable {
 
 	/**
@@ -102,12 +102,14 @@ public class Folder implements Serializable {
 	public Part newPart() {
 		Part part = new Part();
 		parts.add(part);
+		part.setFolder(this);
 		return part;
 	}
 
 	public Quitus newQuitus() {
 		Quitus nquitus = new Quitus();
 		quitus.add(nquitus);
+		nquitus.setFolder(this);
 		return nquitus;
 	}
 

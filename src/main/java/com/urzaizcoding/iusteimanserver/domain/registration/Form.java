@@ -28,10 +28,10 @@ public class Form implements Serializable{
 	 */
 	private static final long serialVersionUID = 7562577602401391699L;
 
-	@Column(nullable = false,columnDefinition = "DATE")
+	@Column(columnDefinition = "DATE")
 	private LocalDate generationDate;
 	
-	private Boolean isEditable;
+	private Boolean isEditable = true;
 
 	@Builder
 	public Form(LocalDate generationDate,

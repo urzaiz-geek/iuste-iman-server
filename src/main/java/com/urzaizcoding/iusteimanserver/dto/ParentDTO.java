@@ -4,23 +4,21 @@ import com.urzaizcoding.iusteimanserver.domain.registration.student.ParentAttrib
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 
 @Getter
-@NoArgsConstructor
 public class ParentDTO {
 	
-	private String names;
-	private String job;
-	private String contact;
-	private String regionOfOrigin;
-	private ParentAttribute attribute;
-	private String place;
+	private final String names;
+	private final String job;
+	private final String contact;
+	private final String regionOfOrigin;
+	private final ParentAttribute attribute;
+	private final String place;
 	
 	@Builder
-	public ParentDTO(String names, String job, String contact, String regionOfOrigin,
-			ParentAttribute attribute, String place) {
+	public ParentDTO(String names, String job, String contact, String regionOfOrigin, ParentAttribute attribute,
+			String place) {
 		super();
 		this.names = names;
 		this.job = job;
@@ -29,4 +27,6 @@ public class ParentDTO {
 		this.attribute = attribute;
 		this.place = place;
 	}
+	
+	
 }

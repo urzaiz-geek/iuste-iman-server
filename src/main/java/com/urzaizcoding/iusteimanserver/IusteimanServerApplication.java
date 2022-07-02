@@ -9,5 +9,4 @@ public class IusteimanServerApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(IusteimanServerApplication.class, args);
 	}
-
 }

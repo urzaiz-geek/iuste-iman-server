@@ -2,23 +2,38 @@ package com.urzaizcoding.iusteimanserver.dto;
 
 import java.time.LocalDate;
 
+import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
 public class FolderDTOLigth {
-	private Long id;
+	private final Long id;
 
-	private String folderRegistrationNumber;
+	private final String folderRegistrationNumber;
 
-	private String creationDate;
+	private final String creationDate;
 
-	private LocalDate depositDate;
+	private final LocalDate depositDate;
 	
-	private Boolean validated;
+	private final Boolean validated;
 	
-	private StudentDTOLigth student;
+	private final StudentDTOLigth student;
 	
-	private CourseDTOLigth course;
+	private final CourseDTOLigth course;
+
+	@Builder
+	public FolderDTOLigth(Long id, String folderRegistrationNumber, String creationDate, LocalDate depositDate,
+			Boolean validated, StudentDTOLigth student, CourseDTOLigth course) {
+		super();
+		this.id = id;
+		this.folderRegistrationNumber = folderRegistrationNumber;
+		this.creationDate = creationDate;
+		this.depositDate = depositDate;
+		this.validated = validated;
+		this.student = student;
+		this.course = course;
+	}
+	
+	
+	
 }

@@ -150,4 +150,8 @@ public class Student extends Person {
 		this.parents.stream().forEach(p -> p.setStudent(this));
 	}
 
+	public static String generateStudentRegistrationId() {
+		return "dummy";
+	}
+
 }

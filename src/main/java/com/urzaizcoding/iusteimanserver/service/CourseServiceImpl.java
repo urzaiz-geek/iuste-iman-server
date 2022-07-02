@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import com.urzaizcoding.iusteimanserver.domain.registration.Folder;
 import com.urzaizcoding.iusteimanserver.domain.registration.course.Course;
 import com.urzaizcoding.iusteimanserver.domain.registration.student.Student;
+import com.urzaizcoding.iusteimanserver.exception.MailNotificationFailureException;
 import com.urzaizcoding.iusteimanserver.exception.ResourceNotFoundException;
 import com.urzaizcoding.iusteimanserver.repository.CourseRepository;
 import com.urzaizcoding.iusteimanserver.repository.ParentRepository;
@@ -24,13 +25,15 @@ public class CourseServiceImpl implements CourseService {
 	private final CourseRepository courseRepository;
 	private final StudentRepository studentRepository;
 	private final ParentRepository parentRepository;
+	private final MailNotificationService mailNotificationService;
 
 	public CourseServiceImpl(CourseRepository courseRepository, StudentRepository studentRepository,
-			ParentRepository parentRepository) {
+			ParentRepository parentRepository, MailNotificationService mailNotificationService) {
 		super();
 		this.courseRepository = courseRepository;
 		this.studentRepository = studentRepository;
 		this.parentRepository = parentRepository;
+		this.mailNotificationService = mailNotificationService;
 	}
 
 	@Override
@@ -58,7 +61,8 @@ public class CourseServiceImpl implements CourseService {
 
 	@Transactional
 	@Override
-	public Student subscribeStudent(Student studentEntity, Long courseId) throws ResourceNotFoundException {
+	public Student subscribeStudent(Student studentEntity, Long courseId)
+			throws ResourceNotFoundException, MailNotificationFailureException {
 
 		// get the concerned course
 
@@ -68,12 +72,16 @@ public class CourseServiceImpl implements CourseService {
 		Folder folder = concernedCourse.newFolder();
 		studentEntity.setFolder(folder);
 
+//TO-DO uncomment this line later
+//		mailNotificationService.sendRegistrationEmail(studentEntity);
+
 		return studentRepository.save(studentEntity);
 	}
 
 	@Transactional
 	@Override
-	public Student updateSubscription(Student studentEntity, Long courseId) {
+	public Student updateSubscription(Student studentEntity, Long courseId)
+			throws ResourceNotFoundException, MailNotificationFailureException {
 		// get the concerned course
 
 		Course concernedCourse = courseRepository.findById(courseId).orElseThrow(() -> new ResourceNotFoundException(
@@ -94,6 +102,7 @@ public class CourseServiceImpl implements CourseService {
 		if (!concernedCourse.equals(oldCourse)) {
 			oldCourse.removeFolder(refreshed.getFolder());
 			refreshed.setFolder(concernedCourse.newFolder());
+			mailNotificationService.sendRegistrationEmail(refreshed);
 		}
 
 		parentRepository.deleteCleanParents();
@@ -106,7 +115,25 @@ public class CourseServiceImpl implements CourseService {
 	public Set<Folder> getFoldersOfCourse(@NotNull @NotBlank Long courseId) {
 		Course courseEntity = courseRepository.findById(courseId).orElseThrow(() -> new ResourceNotFoundException(
 				String.format("The course identified by id : %d does not exist", courseId)));
-		return courseEntity.getFolders();
+		Set<Folder> folders = courseEntity.getFolders(); 
+		return folders;
+	}
+
+	@Override
+	public Course findSpecifiedCourse(Long id) throws ResourceNotFoundException {
+		return courseRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(
+				String.format("The course identified by id : %d does not exist", id)));
+	}
+
+	@Override
+	public Course editCourseStatus(Boolean isOpen, @NotNull Long courseId) throws ResourceNotFoundException {
+
+		Course courseEntity = courseRepository.findById(courseId).orElseThrow(() -> new ResourceNotFoundException(
+				String.format("The course identified by id : %d does not exist", courseId)));
+
+		courseEntity.setIsOpen(isOpen);
+
+		return courseRepository.save(courseEntity);
 	}
 
 }

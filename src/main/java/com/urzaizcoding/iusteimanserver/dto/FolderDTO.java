@@ -4,37 +4,33 @@ import java.time.LocalDate;
 import java.util.Set;
 
 import com.urzaizcoding.iusteimanserver.domain.registration.Form;
-import com.urzaizcoding.iusteimanserver.domain.registration.Part;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-
 
 @Getter
-@NoArgsConstructor
 public class FolderDTO {
-	private Long id;
+	private final Long id;
 
-	private String folderRegistrationNumber;
+	private final  String folderRegistrationNumber;
 
-	private String creationDate;
+	private final String creationDate;
 
-	private LocalDate depositDate;
+	private final LocalDate depositDate;
 	
-	private Boolean validated;
+	private final Boolean validated;
 
-	private Set<Part> parts;
+	private final Set<PartDTO> parts;
 
-	private Form form;
+	private final Form form;
 
-	private StudentDTO student;
+	private final StudentDTO student;
 
-	private CourseDTO course;
+	private final CourseDTO course;
 
 	@Builder
 	public FolderDTO(Long id, String folderRegistrationNumber, String creationDate, LocalDate depositDate,
-			Boolean validated, Set<Part> parts, Form form, StudentDTO student, CourseDTO course) {
+			Boolean validated, Set<PartDTO> parts, Form form, StudentDTO student, CourseDTO course) {
 		super();
 		this.id = id;
 		this.folderRegistrationNumber = folderRegistrationNumber;
@@ -46,6 +42,8 @@ public class FolderDTO {
 		this.student = student;
 		this.course = course;
 	}
+
+	
 	
 	
 }

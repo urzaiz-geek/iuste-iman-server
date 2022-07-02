@@ -8,27 +8,28 @@ import com.urzaizcoding.iusteimanserver.domain.registration.course.FeesType;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
 public class FeesDTO {
 	
 	@NotNull @NotBlank
-	private String object;
+	private final String object;
 	
 	@NotNull @Positive
-	private Integer amount;
+	private final Integer amount;
 	
 	@NotNull
-	private FeesType type;
+	private final FeesType type;
 
 	@Builder
-	public FeesDTO(String object, Integer amount, FeesType type) {
+	public FeesDTO(@NotNull @NotBlank String object, @NotNull @Positive Integer amount, @NotNull FeesType type) {
+		super();
 		this.object = object;
 		this.amount = amount;
 		this.type = type;
 	}
+
+	
 	
 	
 	

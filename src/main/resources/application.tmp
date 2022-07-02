@@ -15,7 +15,7 @@ spring:
        host: smtp.gmail.com
        port: 587
        username: ${SPRING_GMAIL_IUSTE_USERNAME}
-       password: ${SPRING_GMAIL_IUSTE_PASSWORD}
+       password: ${SPRING_GMAIL_IUSTE_PASSWORD_NORMAL_RUN}
        protocol: smtp
        tls: true
        properties.mail.smtp:
