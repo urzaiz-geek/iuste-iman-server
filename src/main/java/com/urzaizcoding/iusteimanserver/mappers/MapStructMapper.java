@@ -6,6 +6,7 @@ import org.mapstruct.Mappings;
 import org.mapstruct.ReportingPolicy;
 
 import com.urzaizcoding.iusteimanserver.domain.registration.Folder;
+import com.urzaizcoding.iusteimanserver.domain.registration.Part;
 import com.urzaizcoding.iusteimanserver.domain.registration.course.Course;
 import com.urzaizcoding.iusteimanserver.domain.registration.course.Fees;
 import com.urzaizcoding.iusteimanserver.domain.registration.student.Parent;
@@ -14,7 +15,9 @@ import com.urzaizcoding.iusteimanserver.dto.CourseDTO;
 import com.urzaizcoding.iusteimanserver.dto.CourseDTOLigth;
 import com.urzaizcoding.iusteimanserver.dto.FeesDTO;
 import com.urzaizcoding.iusteimanserver.dto.FolderDTO;
+import com.urzaizcoding.iusteimanserver.dto.FolderDTOLigth;
 import com.urzaizcoding.iusteimanserver.dto.ParentDTO;
+import com.urzaizcoding.iusteimanserver.dto.PartDTO;
 import com.urzaizcoding.iusteimanserver.dto.StudentDTO;
 import com.urzaizcoding.iusteimanserver.dto.StudentDTOLigth;
 
@@ -34,6 +37,9 @@ public interface MapStructMapper {
 	
 	Parent parentDTOToParent(ParentDTO parentResource);
 	
+	@Mappings(
+			@Mapping(target = "id", source = "student.id")
+	)
 	StudentDTO studentToStudentDTO(Student student);
 	
 	Student studentDTOToStudent(StudentDTO studentResource);
@@ -42,6 +48,15 @@ public interface MapStructMapper {
 			@Mapping(target = "creationDate",source = "folder.creationDate",dateFormat = "dd-MM-yyyy HH:mm:ss")
 	)
 	FolderDTO folderToFolderDTO(Folder folder);
+	
+	FolderDTOLigth folderToFolderDTOLight(Folder folder);
+	
+	@Mappings(
+			@Mapping(target = "folderId", source = "folder.id")
+	)
+	PartDTO partToPartDTO(Part part);
+	
+	Part partDTOToPart(PartDTO partResource);
 	
 	FeesDTO feesToFeesDTO(Fees fees);
 }

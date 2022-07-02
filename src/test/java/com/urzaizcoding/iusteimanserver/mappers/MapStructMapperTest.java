@@ -2,8 +2,6 @@ package com.urzaizcoding.iusteimanserver.mappers;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
@@ -11,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 
-import com.urzaizcoding.iusteimanserver.domain.registration.Folder;
 import com.urzaizcoding.iusteimanserver.domain.registration.course.Course;
 import com.urzaizcoding.iusteimanserver.domain.registration.course.Fees;
 import com.urzaizcoding.iusteimanserver.domain.registration.course.FeesType;
@@ -19,7 +16,6 @@ import com.urzaizcoding.iusteimanserver.domain.registration.student.Parent;
 import com.urzaizcoding.iusteimanserver.domain.registration.student.ParentAttribute;
 import com.urzaizcoding.iusteimanserver.dto.CourseDTO;
 import com.urzaizcoding.iusteimanserver.dto.FeesDTO;
-import com.urzaizcoding.iusteimanserver.dto.FolderDTO;
 import com.urzaizcoding.iusteimanserver.dto.ParentDTO;
 
 @SpringBootTest(webEnvironment = WebEnvironment.NONE, classes = { MapStructMapperImpl.class })
@@ -121,43 +117,6 @@ class MapStructMapperTest {
 		assertThat(parentResource.getNames()).isEqualTo(parentEntity.getNames());
 		assertThat(parentResource.getPlace()).isEqualTo(parentEntity.getPlace());
 		assertThat(parentResource.getRegionOfOrigin()).isEqualTo(parentEntity.getRegionOfOrigin());
-	}
-
-	@Test
-	void shouldConvertFeesDTOToFees() throws Exception {
-		// Given
-
-		final FeesDTO feesResource = FeesDTO.builder().amount(25000).object("Preinscription").type(FeesType.DEFAULT)
-				.build();
-
-		// When
-
-		final Fees feesEntity = underTest.feesDTOToFees(feesResource);
-
-		// Then
-
-		assertThat(feesEntity.getObject()).isEqualTo(feesResource.getObject());
-		assertThat(feesEntity.getAmount()).isEqualTo(feesResource.getAmount());
-		assertThat(feesEntity.getType()).isEqualTo(feesResource.getType());
-	}
-
-	@Test
-	void shouldConvertFolderDTOToFolder() throws Exception {
-		// Given
-
-		final FolderDTO folderResource = FolderDTO.builder()
-
-				.build();
-
-		// When
-		final Folder folderEntity = underTest.folderDTOToFolder(folderResource);
-
-		// Then
-
-		assertThat(folderEntity.getCreationDate()).isEqualTo(LocalDateTime.parse(folderResource.getCreationDate(),
-				DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
-		assertThat(folderEntity.getDepositDate()).isEqualTo(folderResource.getCreationDate());
-		assertThat(folderEntity.getFolderRegistrationNumber()).isEqualTo(folderResource.getFolderRegistrationNumber());
 	}
 
 	@Test

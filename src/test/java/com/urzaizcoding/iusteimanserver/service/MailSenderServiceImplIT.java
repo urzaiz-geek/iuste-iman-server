@@ -17,7 +17,7 @@ import com.urzaizcoding.iusteimanserver.domain.registration.student.Student;
 class MailSenderServiceImplIT {
 
 	
-	private MailSenderService underTest;
+	private MailNotificationService underTest;
 
 	@Autowired
 	private JavaMailSender javaMailSender;
@@ -27,7 +27,7 @@ class MailSenderServiceImplIT {
 
 	@BeforeEach
 	void setup() throws Exception {
-		underTest = new MailSenderServiceImpl(javaMailSender, freeMarkerConfigurer);
+		underTest = new MailNotificationServiceImpl(javaMailSender, freeMarkerConfigurer);
 	}
 
 	@ParameterizedTest(name = "sending email to {0}")

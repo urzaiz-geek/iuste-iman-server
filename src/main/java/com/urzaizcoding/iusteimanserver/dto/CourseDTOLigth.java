@@ -1,27 +1,30 @@
 package com.urzaizcoding.iusteimanserver.dto;
 
+import javax.validation.constraints.NotNull;
+
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
 
 
-@Data
-@NoArgsConstructor
+@Getter
 public class CourseDTOLigth {
-	private Long id;
+	private final Long id;
 	
-	private String faculty;
+	private final String faculty;
 	
-	private String cycle;
+	private final String cycle;
 	
-	private String speciality;
+	private final String speciality;
 	
-	private String year;
+	private final String year;
 	
-	private Integer level;
-
+	private final Integer level;
+	@NotNull
+	private final Boolean isOpen;
+	
 	@Builder
-	public CourseDTOLigth(Long id, String faculty, String cycle, String speciality, String year, Integer level) {
+	public CourseDTOLigth(Long id, String faculty, String cycle, String speciality, String year, Integer level,
+			@NotNull Boolean isOpen) {
 		super();
 		this.id = id;
 		this.faculty = faculty;
@@ -29,7 +32,10 @@ public class CourseDTOLigth {
 		this.speciality = speciality;
 		this.year = year;
 		this.level = level;
+		this.isOpen = isOpen;
 	}
+
+	
 	
 	
 }

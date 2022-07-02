@@ -64,6 +64,8 @@ public class Course implements Serializable {
 
 	@Column(nullable = false)
 	private Integer level;
+	
+	private Boolean isOpen = true;
 
 	@OneToMany(mappedBy = "course", cascade = {CascadeType.ALL}, orphanRemoval = true,fetch = FetchType.LAZY)
 	private Set<Folder> folders;
@@ -84,7 +86,7 @@ public class Course implements Serializable {
 		this.folders = folders;
 
 		this.fees = fees == null ? new HashSet<>() : fees;
-		this.folders = folders == null ? new HashSet<>() : folders;
+		this.folders = new HashSet<>();
 	}
 	
 	public Course() {

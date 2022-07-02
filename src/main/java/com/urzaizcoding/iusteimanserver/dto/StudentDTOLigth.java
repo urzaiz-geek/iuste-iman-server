@@ -5,29 +5,27 @@ import java.time.LocalDate;
 import com.urzaizcoding.iusteimanserver.domain.Sex;
 
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
 
-@Data
-@NoArgsConstructor
+@Getter
 public class StudentDTOLigth {
-	private Long id;
+	private final Long id;
 
-	private String firstName;
+	private final String firstName;
 
-	private String lastName;
+	private final String lastName;
 
-	private LocalDate birthDate;
+	private final LocalDate birthDate;
 
-	private Sex sex;
+	private final Sex sex;
 
-	private String birthPlace;
+	private final String birthPlace;
 
-	private String country;
+	private final String country;
 
-	private String contact;
+	private final String contact;
 
-	private String email;
+	private final String email;
 
 	@Builder
 	public StudentDTOLigth(Long id, String firstName, String lastName, LocalDate birthDate, Sex sex, String birthPlace,

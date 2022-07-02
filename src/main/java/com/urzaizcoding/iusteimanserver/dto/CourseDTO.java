@@ -10,24 +10,27 @@ import lombok.NoArgsConstructor;
 
 
 @Getter
-@NoArgsConstructor
 public class CourseDTO {
-	private Long id;
+	private final Long id;
 	@NotNull
-	private String faculty;
+	private final String faculty;
 	@NotNull
-	private String cycle;
+	private final String cycle;
 	@NotNull
-	private String speciality;
+	private final String speciality;
 	@NotNull
-	private String year;
+	private final String year;
 	@NotNull
-	private Integer level;
+	private final Integer level;
+	
+	@NotNull
+	private final Boolean isOpen;
 	
 	private Set<FeesDTO> fees;
-	
+
 	@Builder
-	private CourseDTO(Long id, String faculty, String cycle, String speciality, String year, Integer level, Set<FeesDTO> fees) {
+	public CourseDTO(Long id, @NotNull String faculty, @NotNull String cycle, @NotNull String speciality,
+			@NotNull String year, @NotNull Integer level, @NotNull Boolean isOpen, Set<FeesDTO> fees) {
 		super();
 		this.id = id;
 		this.faculty = faculty;
@@ -35,8 +38,11 @@ public class CourseDTO {
 		this.speciality = speciality;
 		this.year = year;
 		this.level = level;
+		this.isOpen = isOpen;
 		this.fees = fees;
 	}
+	
+	
 	
 	
 }

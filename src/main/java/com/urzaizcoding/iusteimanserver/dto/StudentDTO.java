@@ -13,77 +13,75 @@ import com.urzaizcoding.iusteimanserver.domain.registration.student.LanguageLeve
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
 public class StudentDTO {
 	
-	private Long id;
+	private final Long id;
 
 	@NotNull
-	private String firstName;
+	private final String firstName;
 
-	private String lastName;
+	private final String lastName;
 
 	@NotNull
-	private  LocalDate birthDate;
+	private  final LocalDate birthDate;
 	
 	@NotNull
-	private  Sex sex;
+	private  final Sex sex;
 
 	@NotNull
-	private  String birthPlace;
+	private  final String birthPlace;
 
 	@NotNull
-	private  String country;
+	private  final String country;
 
 	@NotNull
-	private  String contact;
+	private  final String contact;
 
 	@NotNull @Email
-	private  String email;
+	private  final String email;
 
-	private  String registrationId;
-
-	@NotNull
-	private  String regionOfOrigin;
+	private  final String registrationId;
 
 	@NotNull
-	private  String entranceDiploma;
+	private  final String regionOfOrigin;
+
+	@NotNull
+	private  final String entranceDiploma;
 
 	@NotNull
 	@Size(max = 4)
-	private  String yearOfGraduation;
+	private  final String yearOfGraduation;
 
 	@NotNull
-	private  String schoolOfGraduation;
+	private  final String schoolOfGraduation;
 	
-	private  String diplomaOption;
+	private  final String diplomaOption;
 
 	@NotNull
-	private  String countryOfGraduation;
+	private  final String countryOfGraduation;
 
 	@Valid @NotNull
-	private  LanguageLevel frenchLevel;
+	private  final LanguageLevel frenchLevel;
 
 	@Valid @NotNull
-	private  LanguageLevel englishLevel;
+	private  final LanguageLevel englishLevel;
 
-	private  String photoPath;
+	private  final String photoPath;
 
-	private  Set<ParentDTO> parents;
+	private  final Set<ParentDTO> parents;
 	
 	
 
 	@Builder
-	private StudentDTO(Long studentId, String firstName, String lastName, LocalDate birthDate, Sex sex,
+	private StudentDTO(Long id, String firstName, String lastName, LocalDate birthDate, Sex sex,
 			String birthPlace, String country, String contact, String email, String registrationId,
 			String regionOfOrigin, String entranceDiploma, String yearOfGraduation, String schoolOfGraduation,
 			String diplomaOption, String countryOfGraduation, LanguageLevel frenchLevel, LanguageLevel englishLevel,
 			String photoPath, Set<ParentDTO> parents) {
 		super();
-		this.id = studentId;
+		this.id = id;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.birthDate = birthDate;
@@ -104,7 +102,6 @@ public class StudentDTO {
 		this.photoPath = photoPath;
 		this.parents = parents;
 	}
-	
 	
 
 }

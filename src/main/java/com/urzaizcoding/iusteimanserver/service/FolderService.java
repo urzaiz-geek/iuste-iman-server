@@ -8,25 +8,31 @@ import javax.validation.constraints.NotNull;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.urzaizcoding.iusteimanserver.domain.registration.Folder;
+import com.urzaizcoding.iusteimanserver.domain.registration.Part;
+import com.urzaizcoding.iusteimanserver.exception.ResourceNotFoundException;
 
 public interface FolderService {
 
 	List<Folder> findAllFolders();
 
-	void deleteFolder(@NotNull @NotBlank String folderRegistrationNumber);
+	void deleteFolder(@NotNull @NotBlank String folderRegistrationNumber) throws ResourceNotFoundException;
 
-	Folder findFolderByRegistrationNumber(@NotNull @NotBlank String folderRegistrationNumber);
+	Folder findFolderByRegistrationNumber(@NotNull @NotBlank String folderRegistrationNumber)
+			throws ResourceNotFoundException;
 
-	Folder validateFolder(@NotNull @NotBlank String folderRegistrationNumber);
+	Folder validateFolder(@NotNull @NotBlank String folderRegistrationNumber) throws Exception;
 
-	void deleteFolder(@NotNull Long id);
+	void deleteFolder(@NotNull Long id) throws ResourceNotFoundException;
 
-	Long addPart(@NotNull @NotBlank String folderRegistrationNumber, MultipartFile part);
+	Part addPart(@NotNull @NotBlank String folderRegistrationNumber, Part partEntity, MultipartFile part)
+			throws Exception;
 
-	FileSpec getPartFile(@NotNull @NotBlank String folderRegistrationNumber, @NotNull Long partId);
+	FileSpec getPartFile(@NotNull @NotBlank String folderRegistrationNumber, @NotNull Long partId)
+			throws ResourceNotFoundException;
 
-	FileSpec generateForm(@NotNull @NotBlank String folderRegistrationNumder);
+	FileSpec generateForm(@NotNull @NotBlank String folderRegistrationNumder) throws ResourceNotFoundException;
 
-	FileSpec generateQuitus(@NotNull @NotBlank String folderRegistrationNumber, @NotNull Integer quitusId);
+	FileSpec generateQuitus(@NotNull @NotBlank String folderRegistrationNumber, @NotNull Integer quitusId)
+			throws ResourceNotFoundException;
 
 }
