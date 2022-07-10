@@ -20,7 +20,7 @@ spring:
    h2:
        console.enabled: true
    datasource:
-       url: jdbc:postgresql://localhost:5432/iusteimandb
+       url: jdbc:postgresql://${SPRING_IUSTEIMAN_DB_HOST}:${SPRING_IUSTEIMAN_DB_PORT}/${SPRING_IUSTEIMAN_DB_NAME}
        username: ${SPRING_IUSTEIMAN_USER}
        password: ${SPRING_IUSTEIMAN_DB_PASS}
        driverClassName: org.postgresql.Driver
