@@ -26,14 +26,14 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.urzaizcoding.iusteimanserver.domain.registration.Folder;
 import com.urzaizcoding.iusteimanserver.domain.registration.Part;
 import com.urzaizcoding.iusteimanserver.dto.FolderDTO;
-import com.urzaizcoding.iusteimanserver.dto.FolderDTOLigth;
+import com.urzaizcoding.iusteimanserver.dto.FolderDTOLight;
 import com.urzaizcoding.iusteimanserver.dto.PartDTO;
 import com.urzaizcoding.iusteimanserver.mappers.MapStructMapper;
 import com.urzaizcoding.iusteimanserver.service.FileSpec;
 import com.urzaizcoding.iusteimanserver.service.FolderService;
 
 @Controller
-@CrossOrigin
+@CrossOrigin("*")
 @RequestMapping("/folders")
 public class FolderController {
 
@@ -46,24 +46,17 @@ public class FolderController {
 		this.mapper = mapper;
 	}
 
-	@PutMapping(
-			produces = { MediaType.APPLICATION_JSON_VALUE },
-			path = "{folderRegistrationNumber}/status"
-	)
-	public ResponseEntity<FolderDTOLigth> validateFolder(@PathVariable @NotNull @NotBlank String folderRegistrationNumber)
-			throws Exception {
+	@PutMapping(produces = { MediaType.APPLICATION_JSON_VALUE }, path = "{folderRegistrationNumber}/status")
+	public ResponseEntity<FolderDTOLight> validateFolder(
+			@PathVariable @NotNull @NotBlank String folderRegistrationNumber) throws Exception {
 
 		Folder folderEntity = folderService.validateFolder(folderRegistrationNumber);
 
-		return ResponseEntity.status(HttpStatus.OK)
-				.body(mapper.folderToFolderDTOLight(folderEntity));
+		return ResponseEntity.status(HttpStatus.OK).body(mapper.folderToFolderDTOLight(folderEntity));
 
 	}
 
-	@GetMapping(
-			produces = { MediaType.APPLICATION_JSON_VALUE },
-			path = "{folderRegistrationNumber}"
-	)
+	@GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE }, path = "{folderRegistrationNumber}")
 	public ResponseEntity<FolderDTO> getFolderByRegistrationNumber(
 			@PathVariable @NotNull @NotBlank String folderRegistrationNumber) {
 
@@ -72,17 +65,13 @@ public class FolderController {
 		return ResponseEntity.ok(mapper.folderToFolderDTO(folderEntity));
 	}
 
-	@GetMapping(
-			produces = { MediaType.APPLICATION_JSON_VALUE }
-	)
-	public ResponseEntity<List<FolderDTOLigth>> getAllFolders() {
-		return ResponseEntity.ok(folderService.findAllFolders().stream()
-				.map(f -> mapper.folderToFolderDTOLight(f)).collect(Collectors.toList()));
+	@GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE })
+	public ResponseEntity<List<FolderDTOLight>> getAllFolders() {
+		return ResponseEntity.ok(folderService.findAllFolders().stream().map(f -> mapper.folderToFolderDTOLight(f))
+				.collect(Collectors.toList()));
 	}
 
-	@DeleteMapping(
-			path = "{folderRegistrationNumber}"
-	)
+	@DeleteMapping(path = "{folderRegistrationNumber}")
 	public ResponseEntity<Void> deleteFolder(@PathVariable @NotNull @NotBlank String folderRegistrationNumber)
 			throws Exception {
 
@@ -91,28 +80,16 @@ public class FolderController {
 		return ResponseEntity.ok().build();
 	}
 
-	@DeleteMapping(
-			path = "{id}"
-	)
-	public ResponseEntity<Void> deleteFolder(@PathVariable @NotNull Long id) {
-
-		folderService.deleteFolder(id);
-
-		return ResponseEntity.ok().build();
-	}
-
-	@PostMapping(
-			consumes = { MediaType.MULTIPART_FORM_DATA_VALUE,MediaType.APPLICATION_JSON_VALUE },
-			path = { "{folderRegistrationNumber}/parts" }
-	)
+	@PostMapping(consumes = { MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE }, path = {
+			"{folderRegistrationNumber}/parts" })
 	public ResponseEntity<PartDTO> addPart(@RequestPart("part") MultipartFile part,
 			@PathVariable @NotNull @NotBlank String folderRegistrationNumber,
-			@RequestPart("metadata") @NotNull PartDTO partResource,
-			UriComponentsBuilder uriComponentsBuilder) throws Exception {
-		
+			@RequestPart("metadata") @NotNull PartDTO partResource, UriComponentsBuilder uriComponentsBuilder)
+			throws Exception {
+
 		Part partEntity = mapper.partDTOToPart(partResource);
 
-		partEntity = folderService.addPart(folderRegistrationNumber,partEntity, part);
+		partEntity = folderService.addPart(folderRegistrationNumber, partEntity, part);
 
 		UriComponents uriComponents = uriComponentsBuilder.path("/folders/{folderRegistrationNumber}/parts/{id}")
 				.buildAndExpand(folderRegistrationNumber, partEntity.getId());
@@ -121,47 +98,43 @@ public class FolderController {
 				.body(mapper.partToPartDTO(partEntity));
 	}
 
-	@GetMapping(
-			path = { "{folderRegistrationNumber}/parts/{id}" },
-			produces = { MediaType.IMAGE_JPEG_VALUE,MediaType.IMAGE_PNG_VALUE }
-	)
+	@GetMapping(path = { "{folderRegistrationNumber}/parts/{id}" }, produces = { MediaType.IMAGE_JPEG_VALUE,
+			MediaType.IMAGE_PNG_VALUE })
 	public ResponseEntity<byte[]> getPart(
 			@PathVariable("folderRegistrationNumber") @NotNull @NotBlank String folderRegistrationNumber,
 			@PathVariable("id") @NotNull Long partId) throws Exception {
 
 		FileSpec fileSpec = folderService.getPartFile(folderRegistrationNumber, partId);
 		return ResponseEntity.ok()
-				.header(HttpHeaders.CONTENT_DISPOSITION,String.format("attachment;filename=%s", fileSpec.fileName()))
-				.contentLength(fileSpec.fileSize())
-				.body(fileSpec.data());
+				.header(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment;filename=%s", fileSpec.fileName()))
+				.contentLength(fileSpec.fileSize()).body(fileSpec.data());
 
 	}
 
-	@GetMapping(
-			path = { "{folderRegistrationNumber}/form" },
-			produces = { MediaType.APPLICATION_PDF_VALUE }
-	)
+	@DeleteMapping(path = { "{folderRegistrationNumber}/parts/{id}" })
+	public ResponseEntity<Void> deletePart(@NotNull @NotBlank @PathVariable String folderRegistrationNumber,
+			@NotNull @PathVariable Long id) throws Exception {
+		folderService.deletePart(folderRegistrationNumber,id);
+		return ResponseEntity.ok().build();
+	}
+
+	@GetMapping(path = { "{folderRegistrationNumber}/form" }, produces = { MediaType.APPLICATION_PDF_VALUE })
 	public ResponseEntity<byte[]> generatePdfForm(@PathVariable @NotNull @NotBlank String folderRegistrationNumder) {
 
 		FileSpec fileSpec = folderService.generateForm(folderRegistrationNumder);
 		return ResponseEntity.ok()
-				.header(HttpHeaders.CONTENT_DISPOSITION,String.format("attachment;filename=%s", fileSpec.fileName()))
-				.contentLength(fileSpec.fileSize())
-				.body(fileSpec.data());
+				.header(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment;filename=%s", fileSpec.fileName()))
+				.contentLength(fileSpec.fileSize()).body(fileSpec.data());
 	}
 
-	@GetMapping(
-			produces = { MediaType.APPLICATION_PDF_VALUE },
-			path = {"{folderRegistrationNumber}/"}
-	)
+	@GetMapping(produces = { MediaType.APPLICATION_PDF_VALUE }, path = { "{folderRegistrationNumber}/{quitusId}" })
 	public ResponseEntity<byte[]> generatePdfQuitus(@PathVariable @NotNull @NotBlank String folderRegistrationNumber,
 			@PathVariable @NotNull Integer quitusId) throws Exception {
 
 		FileSpec fileSpec = folderService.generateQuitus(folderRegistrationNumber, quitusId);
 		return ResponseEntity.ok()
-				.header(HttpHeaders.CONTENT_DISPOSITION,String.format("attachment;filename=%s", fileSpec.fileName()))
-				.contentLength(fileSpec.fileSize())
-				.body(fileSpec.data());
+				.header(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment;filename=%s", fileSpec.fileName()))
+				.contentLength(fileSpec.fileSize()).body(fileSpec.data());
 	}
 
 }

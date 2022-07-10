@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class FolderDTOLigth {
+public class FolderDTOLight {
 	private final Long id;
 
 	private final String folderRegistrationNumber;
@@ -17,13 +17,13 @@ public class FolderDTOLigth {
 	
 	private final Boolean validated;
 	
-	private final StudentDTOLigth student;
+	private final StudentDTOLight student;
 	
-	private final CourseDTOLigth course;
+	private final CourseDTOLight course;
 
 	@Builder
-	public FolderDTOLigth(Long id, String folderRegistrationNumber, String creationDate, LocalDate depositDate,
-			Boolean validated, StudentDTOLigth student, CourseDTOLigth course) {
+	public FolderDTOLight(Long id, String folderRegistrationNumber, String creationDate, LocalDate depositDate,
+			Boolean validated, StudentDTOLight student, CourseDTOLight course) {
 		super();
 		this.id = id;
 		this.folderRegistrationNumber = folderRegistrationNumber;

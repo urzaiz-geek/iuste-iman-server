@@ -2,7 +2,6 @@ package com.urzaizcoding.iusteimanserver.domain.registration;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -36,10 +35,6 @@ public class Part implements Serializable {
 	@Getter(value = AccessLevel.NONE)
 	private static final long serialVersionUID = -5661275494800687333L;
 
-	private static String NAME_FORMAT = "%s-%s.%s";
-
-	private static String DATE_TIME_FORMAT = "yyyy-MM-dd-hh-mm-ss";
-
 	@Getter(AccessLevel.NONE)
 	private static final String PART_SEQUENCE = "part_sequence";
 
@@ -60,7 +55,7 @@ public class Part implements Serializable {
 	@Column(length = 10)
 	private String fileType;
 
-	@Column(columnDefinition = "DATE")
+	@Column(columnDefinition = "TIMESTAMP")
 	private LocalDateTime uploadDate;
 
 	private Long size;
@@ -95,18 +90,13 @@ public class Part implements Serializable {
 			// set it with the oriinal file name
 			this.name = originalFileName;
 		}
-
-		if (!this.name.contains("\\.")) {
+		
+		this.name = this.name.trim().strip(); //remove leadings and blank spaces
+		if (!this.name.contains(".")) {
 			// we git it the same extension as the originalFileName
 			this.name = String.format("%s.%s",name,
 					originalFileName.substring(originalFileName.indexOf("."), originalFileName.length()));
 		}
-
-		String strictName = name.substring(0, name.indexOf("."));
-		String extension = name.substring(name.indexOf("."), name.length());
-		DateTimeFormatter formater = DateTimeFormatter.ofPattern(DATE_TIME_FORMAT);
-
-		this.name = String.format(NAME_FORMAT, strictName, formater.format(uploadDate), extension);
 	}
 
 }

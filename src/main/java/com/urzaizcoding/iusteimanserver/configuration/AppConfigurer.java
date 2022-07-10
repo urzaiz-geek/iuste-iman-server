@@ -1,5 +1,7 @@
 package com.urzaizcoding.iusteimanserver.configuration;
 
+import java.time.ZoneId;
+
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration.AccessLevel;
 import org.springframework.context.annotation.Bean;
@@ -30,5 +32,9 @@ public class AppConfigurer {
 		bean.setTemplateLoaderPath("classpath:/templates");
 		
 		return bean;
+	}
+	
+	public static ZoneId appTimeZoneId() {
+		return ZoneId.of("UTC");
 	}
 }

@@ -1,6 +1,7 @@
 package com.urzaizcoding.iusteimanserver.domain.user;
 
 import java.io.Serializable;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -11,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -47,9 +49,14 @@ public class Account implements Serializable {
 	@Column(name = "account_id")
 	private Long id;
 	
+	private Role role;
+	
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "fk_account_creator_id")
 	private Account creator;
+	
+	@OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<Notification> notifications; 
 
 	@Builder
 	public Account(Long id, Account creator) {
@@ -58,5 +65,13 @@ public class Account implements Serializable {
 		this.creator = creator;
 	}
 	
+	public void addNotification(Notification notification) {
+		this.notifications.add(notification);
+		notification.setAccount(this);
+	}
 	
+	public void removeNotification(Notification notification) {
+		this.notifications.remove(notification);
+		notification.setAccount(null);
+	}
 }

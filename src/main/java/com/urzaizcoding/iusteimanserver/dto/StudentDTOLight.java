@@ -8,7 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class StudentDTOLigth {
+public class StudentDTOLight {
 	private final Long id;
 
 	private final String firstName;
@@ -28,7 +28,7 @@ public class StudentDTOLigth {
 	private final String email;
 
 	@Builder
-	public StudentDTOLigth(Long id, String firstName, String lastName, LocalDate birthDate, Sex sex, String birthPlace,
+	public StudentDTOLight(Long id, String firstName, String lastName, LocalDate birthDate, Sex sex, String birthPlace,
 			String country, String contact, String email) {
 		super();
 		this.id = id;

@@ -41,20 +41,27 @@ public class Student extends Person {
 	@Getter(value = AccessLevel.NONE)
 	private static final long serialVersionUID = 4995948429578480105L;
 
+	public static final String BASE_PICTURE_PATH_FORMAT = "/students/pictures/%s/";
+
+	public static final String PICTURE_NAME_FORMAT = "picture_s%d_%s";
+
 	@Column(nullable = true, length = 15)
 	private String registrationId;
 
-	@Column(nullable = false, length = 80)
+	@Column(nullable = false, length = 60)
 	private String regionOfOrigin;
 
-	@Column(nullable = false, length = 80)
+	@Column(nullable = false, length = 60)
 	private String entranceDiploma;
 
 	@Column(nullable = false, length = 4)
 	private String yearOfGraduation;
 
-	@Column(nullable = false, length = 80)
+	@Column(nullable = false, length = 50)
 	private String schoolOfGraduation;
+	
+	@Column(length = 80)
+	private String quarter;
 
 	@Column(nullable = false, length = 50)
 	private String diplomaOption;

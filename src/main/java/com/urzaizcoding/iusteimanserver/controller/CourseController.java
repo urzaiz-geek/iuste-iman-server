@@ -1,13 +1,10 @@
 package com.urzaizcoding.iusteimanserver.controller;
 
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -20,16 +17,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.urzaizcoding.iusteimanserver.domain.registration.Folder;
 import com.urzaizcoding.iusteimanserver.domain.registration.course.Course;
 import com.urzaizcoding.iusteimanserver.domain.registration.student.Student;
 import com.urzaizcoding.iusteimanserver.dto.CourseDTO;
-import com.urzaizcoding.iusteimanserver.dto.CourseDTOLigth;
-import com.urzaizcoding.iusteimanserver.dto.FolderDTOLigth;
+import com.urzaizcoding.iusteimanserver.dto.CourseDTOLight;
+import com.urzaizcoding.iusteimanserver.dto.FolderDTOEmbedded;
 import com.urzaizcoding.iusteimanserver.dto.StudentDTO;
 import com.urzaizcoding.iusteimanserver.mappers.MapStructMapper;
 import com.urzaizcoding.iusteimanserver.service.CourseService;
@@ -50,10 +47,11 @@ public class CourseController {
 	}
 
 	@GetMapping
-	public ResponseEntity<List<CourseDTOLigth>> getAllCourses() {
+	public ResponseEntity<Page<CourseDTOLight>> getAllCourses(@RequestParam(required = false) Integer page,
+			@RequestParam(required = false) Integer size) {
 
-		return ResponseEntity.status(HttpStatus.OK).body(courseService.getAllCourses().stream()
-				.map(course -> mapper.courseToCourseDTOLigth(course)).collect(Collectors.toList()));
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(courseService.getAllCourses(page, size).map(course -> mapper.courseToCourseDTOLigth(course)));
 	}
 
 	@GetMapping(path = "{id}")
@@ -118,10 +116,11 @@ public class CourseController {
 
 	@PutMapping(consumes = { MediaType.APPLICATION_JSON_VALUE }, path = "{courseId}/registrations/{studentId}")
 	public ResponseEntity<StudentDTO> updateSubscription(@Valid @RequestBody StudentDTO studentResource,
-			@PathVariable(name = "courseId") Long courseId, @PathVariable(name = "studentId") Long id) throws Exception {
+			@PathVariable(name = "courseId") Long courseId, @PathVariable(name = "studentId") Long id)
+			throws Exception {
 
 		Student studentEntity = mapper.studentDTOToStudent(studentResource);
-		
+
 		studentEntity.setId(id);
 
 		studentEntity = courseService.updateSubscription(studentEntity, courseId);
@@ -130,23 +129,22 @@ public class CourseController {
 	}
 
 	@GetMapping(path = "{id}/folders")
-	public ResponseEntity<List<FolderDTOLigth>> getFoldersForCourse(
-			@PathVariable(name = "id") @NotNull @NotBlank Long courseId) throws Exception {
+	public ResponseEntity<Page<FolderDTOEmbedded>> getFoldersForCourse(
+			@PathVariable(name = "id") @NotNull @NotBlank Long courseId, @RequestParam(required = false) Integer page,
+			@RequestParam(required = false) Integer size) throws Exception {
 
-		Set<Folder> folders = courseService.getFoldersOfCourse(courseId);
-
-		List<FolderDTOLigth> folderResources = folders.stream().map(f -> mapper.folderToFolderDTOLight(f))
-				.collect(Collectors.toList());
+		Page<FolderDTOEmbedded> folderResources = courseService.getFoldersOfCourse(courseId, page, size)
+				.map(f -> mapper.folderToFolderDTOEmbedded(f));
 
 		return ResponseEntity.ok(folderResources);
 	}
 
 	@PatchMapping(consumes = { MediaType.APPLICATION_JSON_VALUE }, path = { "{id}/status" })
-	public ResponseEntity<CourseDTOLigth> editCourseStatus(@NotNull @Valid @RequestBody CourseDTOLigth courseResource,
+	public ResponseEntity<CourseDTOLight> editCourseStatus(@NotNull @Valid @RequestBody CourseDTOLight courseResource,
 			@NotNull @PathVariable(name = "id") Long courseId) {
-		
-		Course courseEntity = courseService.editCourseStatus(courseResource.getIsOpen(), courseId);
-		
+
+		Course courseEntity = courseService.editCourseStatus(courseResource.getOpen(), courseId);
+
 		return ResponseEntity.ok(mapper.courseToCourseDTOLigth(courseEntity));
 	}
 }

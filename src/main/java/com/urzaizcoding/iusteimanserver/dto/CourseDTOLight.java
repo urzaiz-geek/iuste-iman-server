@@ -7,7 +7,7 @@ import lombok.Getter;
 
 
 @Getter
-public class CourseDTOLigth {
+public class CourseDTOLight {
 	private final Long id;
 	
 	private final String faculty;
@@ -20,11 +20,11 @@ public class CourseDTOLigth {
 	
 	private final Integer level;
 	@NotNull
-	private final Boolean isOpen;
+	private final Boolean open;
 	
 	@Builder
-	public CourseDTOLigth(Long id, String faculty, String cycle, String speciality, String year, Integer level,
-			@NotNull Boolean isOpen) {
+	public CourseDTOLight(Long id, String faculty, String cycle, String speciality, String year, Integer level,
+			@NotNull Boolean open) {
 		super();
 		this.id = id;
 		this.faculty = faculty;
@@ -32,7 +32,7 @@ public class CourseDTOLigth {
 		this.speciality = speciality;
 		this.year = year;
 		this.level = level;
-		this.isOpen = isOpen;
+		this.open = open;
 	}
 
 	

@@ -29,6 +29,9 @@ public class StudentDTO {
 	
 	@NotNull
 	private  final Sex sex;
+	
+	@NotNull
+	private String quarter;
 
 	@NotNull
 	private  final String birthPlace;

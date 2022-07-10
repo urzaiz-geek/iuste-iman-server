@@ -11,4 +11,6 @@ public interface StorageService {
 	 * @return the path if the saving operation succeed
 	 */
 	String saveFile(String path,FileSpec spec, InputStream stream) throws Exception;
+
+	FileSpec getFile(String archivePath) throws Exception;
 }

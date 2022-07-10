@@ -1,13 +1,13 @@
 package com.urzaizcoding.iusteimanserver.service;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import javax.transaction.Transactional;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.urzaizcoding.iusteimanserver.domain.registration.Folder;
@@ -48,14 +48,11 @@ public class CourseServiceImpl implements CourseService {
 	}
 
 	@Override
-	public List<Course> getAllCourses() {
-		return courseRepository.findAll();
-	}
-
-	@Override
+	@Transactional
 	public void deleteCourse(Long id) throws ResourceNotFoundException {
 		Course toDelete = courseRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(
 				String.format("The course identified by id : %d does not exist", id)));
+
 		courseRepository.delete(toDelete);
 	}
 
@@ -112,11 +109,13 @@ public class CourseServiceImpl implements CourseService {
 
 	@Override
 	@Transactional
-	public Set<Folder> getFoldersOfCourse(@NotNull @NotBlank Long courseId) {
+	public Page<Folder> getFoldersOfCourse(@NotNull @NotBlank Long courseId, Integer page, Integer size) {
 		Course courseEntity = courseRepository.findById(courseId).orElseThrow(() -> new ResourceNotFoundException(
 				String.format("The course identified by id : %d does not exist", courseId)));
-		Set<Folder> folders = courseEntity.getFolders(); 
-		return folders;
+		
+		PageRequest pageRequest = PageRequest.of(page == null? 0:page, size == null? 20:size);
+		
+		return courseRepository.getFoldersOfCourse(courseEntity.getId(),pageRequest);
 	}
 
 	@Override
@@ -131,9 +130,15 @@ public class CourseServiceImpl implements CourseService {
 		Course courseEntity = courseRepository.findById(courseId).orElseThrow(() -> new ResourceNotFoundException(
 				String.format("The course identified by id : %d does not exist", courseId)));
 
-		courseEntity.setIsOpen(isOpen);
+		courseEntity.setOpen(isOpen);
 
 		return courseRepository.save(courseEntity);
+	}
+
+	@Override
+	public Page<Course> getAllCourses(Integer page, Integer size) {
+		PageRequest pageRequest = PageRequest.of(page == null ? 0 : page, size == null ? 10 : size);
+		return courseRepository.findAll(pageRequest);
 	}
 
 }

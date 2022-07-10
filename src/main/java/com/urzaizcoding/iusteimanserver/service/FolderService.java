@@ -28,11 +28,13 @@ public interface FolderService {
 			throws Exception;
 
 	FileSpec getPartFile(@NotNull @NotBlank String folderRegistrationNumber, @NotNull Long partId)
-			throws ResourceNotFoundException;
+			throws Exception;
 
 	FileSpec generateForm(@NotNull @NotBlank String folderRegistrationNumder) throws ResourceNotFoundException;
 
 	FileSpec generateQuitus(@NotNull @NotBlank String folderRegistrationNumber, @NotNull Integer quitusId)
 			throws ResourceNotFoundException;
+
+	void deletePart(@NotNull @NotBlank String folderRegistrationNumber, @NotNull Long id) throws ResourceNotFoundException;
 
 }

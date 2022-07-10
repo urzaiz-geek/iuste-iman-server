@@ -1,10 +1,9 @@
 package com.urzaizcoding.iusteimanserver.service;
 
-import java.util.List;
-import java.util.Set;
-
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+
+import org.springframework.data.domain.Page;
 
 import com.urzaizcoding.iusteimanserver.domain.registration.Folder;
 import com.urzaizcoding.iusteimanserver.domain.registration.course.Course;
@@ -16,7 +15,7 @@ public interface CourseService {
 
 	Course saveCourse(Course courseEntity);
 
-	List<Course> getAllCourses();
+	Page<Course> getAllCourses(Integer page, Integer size);
 
 	void deleteCourse(Long id) throws ResourceNotFoundException;
 
@@ -24,7 +23,7 @@ public interface CourseService {
 
 	Student updateSubscription(Student studentEntity, Long courseId) throws ResourceNotFoundException, MailNotificationFailureException;
 
-	Set<Folder> getFoldersOfCourse(@NotNull @NotBlank Long courseId) throws ResourceNotFoundException;
+	Page<Folder> getFoldersOfCourse(@NotNull @NotBlank Long courseId, Integer page, Integer size) throws ResourceNotFoundException;
 
 	Course findSpecifiedCourse(Long id) throws ResourceNotFoundException;
 
