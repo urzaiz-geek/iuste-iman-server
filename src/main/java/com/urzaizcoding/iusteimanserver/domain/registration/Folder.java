@@ -22,6 +22,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import com.urzaizcoding.iusteimanserver.configuration.AppConfigurer;
 import com.urzaizcoding.iusteimanserver.domain.registration.course.Course;
 import com.urzaizcoding.iusteimanserver.domain.registration.student.Student;
 
@@ -64,10 +65,10 @@ public class Folder implements Serializable {
 	@Column(name = "folder_id")
 	private Long id;
 
-	@Column(nullable = false, length = 15)
+	@Column(nullable = false, length = 20)
 	private String folderRegistrationNumber;
 
-	@Column(columnDefinition = "DATE")
+	@Column(columnDefinition = "TIMESTAMP")
 	private LocalDateTime creationDate;
 
 	@Column(columnDefinition = "DATE")
@@ -87,7 +88,7 @@ public class Folder implements Serializable {
 			CascadeType.REMOVE }, orphanRemoval = true)
 	private Set<Quitus> quitus;
 
-	@OneToOne(mappedBy = "folder",fetch = FetchType.LAZY)
+	@OneToOne(mappedBy = "folder",fetch = FetchType.LAZY, orphanRemoval = true)
 	private Student student;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -117,7 +118,7 @@ public class Folder implements Serializable {
 
 		StringBuilder stringBuilder = new StringBuilder();
 
-		stringBuilder.append(DATE_FORMATER.format(LocalDateTime.now()));
+		stringBuilder.append(DATE_FORMATER.format(LocalDateTime.now(AppConfigurer.appTimeZoneId())));
 
 		synchronized (Folder.class) {
 			stringBuilder.append(counterSequence++);

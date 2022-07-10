@@ -17,6 +17,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
 
 import com.urzaizcoding.iusteimanserver.domain.Sex;
 import com.urzaizcoding.iusteimanserver.domain.registration.course.Course;
@@ -105,12 +106,12 @@ class CourseServiceTest {
 		
 		//When
 		
-		List<Course> fetched = underTest.getAllCourses();
+		Page<Course> fetched = underTest.getAllCourses(null, null);
 		
 		//Then
 		
 		verify(courseRepository,times(1)).findAll();
-		assertThat(fetched.contains(courseEntity));
+		assertThat(fetched.toList().contains(courseEntity));
 	}
 	
 	@Test

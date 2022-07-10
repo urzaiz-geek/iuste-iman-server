@@ -6,7 +6,6 @@ import javax.validation.constraints.NotNull;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 
 @Getter
@@ -24,13 +23,13 @@ public class CourseDTO {
 	private final Integer level;
 	
 	@NotNull
-	private final Boolean isOpen;
+	private final Boolean open;
 	
 	private Set<FeesDTO> fees;
 
 	@Builder
 	public CourseDTO(Long id, @NotNull String faculty, @NotNull String cycle, @NotNull String speciality,
-			@NotNull String year, @NotNull Integer level, @NotNull Boolean isOpen, Set<FeesDTO> fees) {
+			@NotNull String year, @NotNull Integer level, @NotNull Boolean open, Set<FeesDTO> fees) {
 		super();
 		this.id = id;
 		this.faculty = faculty;
@@ -38,7 +37,7 @@ public class CourseDTO {
 		this.speciality = speciality;
 		this.year = year;
 		this.level = level;
-		this.isOpen = isOpen;
+		this.open = open;
 		this.fees = fees;
 	}
 	

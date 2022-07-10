@@ -36,19 +36,19 @@ public class Parent {
 	@Column(name = "parent_id")
 	private Long id;
 
-	@Column(length = 255)
-	private String names;
 	@Column(length = 100)
+	private String names;
+	@Column(length = 80)
 	private String job;
 	@Column(length = 15)
 	private String contact;
 
-	@Column(length = 100)
+	@Column(length = 80)
 	private String regionOfOrigin;
 	@Column(length = 1)
 	private ParentAttribute attribute;
 
-	@Column(length = 100)
+	@Column(length = 80)
 	private String place;
 	
 	@ManyToOne(fetch = FetchType.LAZY)

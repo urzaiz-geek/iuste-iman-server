@@ -18,6 +18,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import com.urzaizcoding.iusteimanserver.configuration.AppConfigurer;
 import com.urzaizcoding.iusteimanserver.domain.registration.Folder;
 import com.urzaizcoding.iusteimanserver.domain.registration.Form;
 import com.urzaizcoding.iusteimanserver.domain.registration.Quitus;
@@ -32,8 +33,8 @@ import lombok.ToString;
 @Entity(name = "Course")
 @Table(name = "course")
 @Data
-@ToString(exclude = { "folders","fees" })
-@EqualsAndHashCode(exclude = { "folders","fees" })
+@ToString(exclude = { "folders", "fees" })
+@EqualsAndHashCode(exclude = { "folders", "fees" })
 public class Course implements Serializable {
 
 	/**
@@ -64,18 +65,18 @@ public class Course implements Serializable {
 
 	@Column(nullable = false)
 	private Integer level;
-	
-	private Boolean isOpen = true;
 
-	@OneToMany(mappedBy = "course", cascade = {CascadeType.ALL}, orphanRemoval = true,fetch = FetchType.LAZY)
+	private Boolean open = true;
+
+	@OneToMany(mappedBy = "course", cascade = { CascadeType.ALL }, orphanRemoval = true, fetch = FetchType.LAZY)
 	private Set<Folder> folders;
 
-	@OneToMany(mappedBy = "course", cascade = {CascadeType.ALL}, orphanRemoval = true,fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "course", cascade = { CascadeType.ALL }, orphanRemoval = true, fetch = FetchType.LAZY)
 	private Set<Fees> fees;
 
 	@Builder
-	public Course(Long id, String faculty, String cycle, String speciality, String year, Integer level,
-			Set<Fees> fees, Set<Folder> folders) {
+	public Course(Long id, String faculty, String cycle, String speciality, String year, Integer level, Set<Fees> fees,
+			Set<Folder> folders) {
 		super();
 		this.id = id;
 		this.faculty = faculty;
@@ -88,7 +89,7 @@ public class Course implements Serializable {
 		this.fees = fees == null ? new HashSet<>() : fees;
 		this.folders = new HashSet<>();
 	}
-	
+
 	public Course() {
 		this.fees = new HashSet<>();
 		this.folders = new HashSet<>();
@@ -107,10 +108,15 @@ public class Course implements Serializable {
 			q.setPaiementPlace("Etablissement");
 		});
 
-		folder.setCreationDate(LocalDateTime.now());
+		folder.setCreationDate(LocalDateTime.now(AppConfigurer.appTimeZoneId()));
 		folder.setFolderRegistrationNumber(Folder.generateNewNumber());
 		folder.setValidated(false);
-		folder.setForm(Form.builder().generationDate(LocalDate.now()).isEditable(true).build());
+		folder.setForm(
+				Form.builder()
+					.generationDate(
+						LocalDate.now(AppConfigurer.appTimeZoneId()))
+					.isEditable(true).build()
+				);
 
 		folders.add(folder);
 		folder.setCourse(this);
@@ -127,14 +133,14 @@ public class Course implements Serializable {
 
 	public void clearFees() {
 		Iterator<Fees> iterator = this.fees.iterator();
-		
-		while(iterator.hasNext()){
+
+		while (iterator.hasNext()) {
 			Fees item = iterator.next();
 			iterator.remove();
 			item.setCourse(null);
 		}
 	}
-	
+
 	public void addFees(Fees fees) {
 		this.fees.add(fees);
 		fees.setCourse(this);
@@ -147,7 +153,7 @@ public class Course implements Serializable {
 		this.setSpeciality(courseEntity.getSpeciality());
 		this.setYear(courseEntity.getYear());
 		courseEntity.getFees().stream().forEach(f -> this.addFees(f));
-		
+
 	}
 
 	public void updateInnerFees() {

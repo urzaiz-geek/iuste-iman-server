@@ -1,7 +1,5 @@
 package com.urzaizcoding.iusteimanserver.dto;
 
-import java.time.LocalDate;
-
 import javax.validation.constraints.NotNull;
 
 import lombok.Builder;
@@ -18,7 +16,7 @@ public class PartDTO {
 	@NotNull
 	private final String fileType;
 
-	private final LocalDate uploadDate;
+	private final String uploadDate;
 
 	private final Long size;
 
@@ -28,7 +26,7 @@ public class PartDTO {
 
 	
 	@Builder
-	public PartDTO(Long id, String name, String description, String fileType, LocalDate uploadDate, Long size,
+	public PartDTO(Long id, String name, String description, String fileType, String uploadDate, Long size,
 			String archivePath, Long folderId) {
 		super();
 		this.id = id;

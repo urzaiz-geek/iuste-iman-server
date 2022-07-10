@@ -49,22 +49,22 @@ public abstract class Person implements Serializable {
 	@Column(name = "person_id", updatable = false, nullable = false)
 	protected Long id;
 
-	@Column(nullable = false, length = 100)
+	@Column(nullable = false, length = 60)
 	protected String firstName;
 
-	@Column(length = 100)
+	@Column(length = 60)
 	protected String lastName;
 	@Column(nullable = false, columnDefinition = "DATE")
 	protected LocalDate birthDate;
 	@Column(nullable = false, length = 1, columnDefinition = "CHAR")
 	protected Sex sex;
-	@Column(nullable = false, length = 100)
+	@Column(nullable = false, length = 50)
 	protected String birthPlace;
-	@Column(nullable = false, length = 100)
+	@Column(nullable = false, length = 80)
 	protected String country;
 	@Column(nullable = false, length = 20)
 	protected String contact;
-	@Column(nullable = false, length = 100)
+	@Column(nullable = false, length = 90)
 	protected String email;
 	
 	@OneToOne(fetch = FetchType.LAZY,cascade = {CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH})

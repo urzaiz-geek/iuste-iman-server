@@ -2,7 +2,9 @@ package com.urzaizcoding.iusteimanserver.domain.user;
 
 public enum Role {
 	
-	ADMINISTRATOR("A");
+	ADMINISTRATOR("A"),
+	
+	STUDENT("S");
 	
 	private String code;
 
