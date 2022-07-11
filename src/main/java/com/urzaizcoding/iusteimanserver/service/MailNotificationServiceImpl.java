@@ -1,12 +1,16 @@
 package com.urzaizcoding.iusteimanserver.service;
 
-import java.io.File;
+import java.io.InputStream;
 import java.io.StringWriter;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.mail.MessagingException;
 
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.InputStreamSource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
@@ -27,8 +31,8 @@ public class MailNotificationServiceImpl implements MailNotificationService {
 	private static final String REGISTRATION_MAIL_TEMPLATE_NAME = "registrationMailTemplate.ftl";
 	private static final String SUBSCRIPTION_RECEIVED = "Candidature reçue";
 	private static final String LOGO_CONTENT_ID = "iuste-logo";
-	
-	
+	protected static final String INLINE_FORMAT = "inline-%s";
+
 	private final JavaMailSender javaMailSender;
 	private final FreeMarkerConfigurer freeMarkerConfiguration;
 
@@ -42,7 +46,7 @@ public class MailNotificationServiceImpl implements MailNotificationService {
 	public void sendRegistrationEmail(Student student) throws MailNotificationFailureException {
 
 		Map<String, String> data = new HashMap<>();
-		Map<String, File> inlines = new HashMap<>();
+		Map<String, InputStream> inlines = new HashMap<>();
 
 		// text in template
 
@@ -55,17 +59,16 @@ public class MailNotificationServiceImpl implements MailNotificationService {
 		MimeMessagePreparator mimeMessagePreparator = null;
 		try {
 			inlines.put(LOGO_CONTENT_ID,
-					new File(IusteimanServerApplication.class.getResource(STATIC_LOGO_IUSTE_PNG_PATH).toURI()));
+					IusteimanServerApplication.class.getResourceAsStream(STATIC_LOGO_IUSTE_PNG_PATH));
 
 			String text = processTemplateToString(REGISTRATION_MAIL_TEMPLATE_NAME, data);
 
-			mimeMessagePreparator = prepareEmail(SUBSCRIPTION_RECEIVED, text, student.getEmail(),
-					inlines);
-		}catch (Exception e) {
-			throw new MailNotificationFailureException("email sending failed due to reports to administrators to know more abour this error",e);
+			mimeMessagePreparator = prepareEmail(SUBSCRIPTION_RECEIVED, text, student.getEmail(), inlines);
+		} catch (Exception e) {
+			throw new MailNotificationFailureException(
+					"email sending failed due to reports to administrators to know more abour this error", e);
 		}
 
-		
 		javaMailSender.send(mimeMessagePreparator);
 
 	}
@@ -76,20 +79,30 @@ public class MailNotificationServiceImpl implements MailNotificationService {
 	}
 
 	private MimeMessagePreparator prepareEmail(String subject, String text, String destinatorMail,
-			Map<String, File> inlines) throws MessagingException {
+			Map<String, InputStream> inlines) throws MessagingException {
 
 		return mimeMessage -> {
+
 			MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
 
 			mimeMessageHelper.setSubject(subject);
 			mimeMessageHelper.setTo(destinatorMail);
 
-			mimeMessageHelper.setText(text, true);
+			mimeMessageHelper.setText(text,true);
 
-			if(inlines != null) {
-				for (String id : inlines.keySet()) {
-					mimeMessageHelper.addInline(id, inlines.get(id));
-				}
+			for (String id : inlines.keySet()) {
+
+				InputStreamSource isr = new ByteArrayResource(inlines.get(id).readAllBytes()) {
+
+					@Override
+					public String getFilename() {
+						return String.format(INLINE_FORMAT,
+								DateTimeFormatter.BASIC_ISO_DATE.format(LocalDate.now()));
+					}
+
+				};
+
+				mimeMessageHelper.addInline(id, isr, "Image/PNG");
 			}
 		};
 	}
