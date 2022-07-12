@@ -77,18 +77,16 @@ public class Folder implements Serializable {
 	@Column(nullable = false)
 	private Boolean validated;
 
-	@OneToMany(mappedBy = "folder", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH,
-			CascadeType.REMOVE }, orphanRemoval = true)
+	@OneToMany(mappedBy = "folder", cascade = { CascadeType.ALL }, orphanRemoval = true)
 	private Set<Part> parts;
 
 	@Embedded
 	private Form form;
 
-	@OneToMany(mappedBy = "folder", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH,
-			CascadeType.REMOVE }, orphanRemoval = true)
+	@OneToMany(mappedBy = "folder", cascade = { CascadeType.ALL }, orphanRemoval = true)
 	private Set<Quitus> quitus;
 
-	@OneToOne(mappedBy = "folder",fetch = FetchType.LAZY, orphanRemoval = true)
+	@OneToOne(mappedBy = "folder",fetch = FetchType.LAZY)
 	private Student student;
 
 	@ManyToOne(fetch = FetchType.LAZY)

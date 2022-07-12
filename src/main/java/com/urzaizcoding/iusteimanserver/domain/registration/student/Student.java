@@ -77,7 +77,7 @@ public class Student extends Person {
 
 	private String photoPath;
 
-	@OneToMany(mappedBy = "student", cascade = { CascadeType.ALL }, orphanRemoval = true, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	private Set<Parent> parents;
 
 	@OneToOne(fetch = FetchType.LAZY)
@@ -149,8 +149,6 @@ public class Student extends Person {
 		this.setSchoolOfGraduation(studentEntity.getSchoolOfGraduation());
 		this.setSex(studentEntity.getSex());
 		this.setYearOfGraduation(studentEntity.getYearOfGraduation());
-		studentEntity.getParents().forEach(p -> this.addParent(p));
-
 	}
 
 	public void updateParents() {

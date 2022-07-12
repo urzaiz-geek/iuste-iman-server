@@ -16,7 +16,6 @@ import com.urzaizcoding.iusteimanserver.domain.registration.student.Student;
 import com.urzaizcoding.iusteimanserver.exception.MailNotificationFailureException;
 import com.urzaizcoding.iusteimanserver.exception.ResourceNotFoundException;
 import com.urzaizcoding.iusteimanserver.repository.CourseRepository;
-import com.urzaizcoding.iusteimanserver.repository.ParentRepository;
 import com.urzaizcoding.iusteimanserver.repository.StudentRepository;
 
 @Service
@@ -24,15 +23,13 @@ public class CourseServiceImpl implements CourseService {
 
 	private final CourseRepository courseRepository;
 	private final StudentRepository studentRepository;
-	private final ParentRepository parentRepository;
 	private final MailNotificationService mailNotificationService;
 
 	public CourseServiceImpl(CourseRepository courseRepository, StudentRepository studentRepository,
-			ParentRepository parentRepository, MailNotificationService mailNotificationService) {
+			 MailNotificationService mailNotificationService) {
 		super();
 		this.courseRepository = courseRepository;
 		this.studentRepository = studentRepository;
-		this.parentRepository = parentRepository;
 		this.mailNotificationService = mailNotificationService;
 	}
 
@@ -68,9 +65,10 @@ public class CourseServiceImpl implements CourseService {
 
 		Folder folder = concernedCourse.newFolder();
 		studentEntity.setFolder(folder);
+		studentEntity.updateParents();
 
 //TO-DO uncomment this line later
-//		mailNotificationService.sendRegistrationEmail(studentEntity);
+		mailNotificationService.sendRegistrationEmail(studentEntity);
 
 		return studentRepository.save(studentEntity);
 	}
@@ -92,6 +90,12 @@ public class CourseServiceImpl implements CourseService {
 
 		refreshed.clearParents();
 		refreshed.updateFromOther(studentEntity);
+		studentEntity.getParents().forEach(
+				p -> {
+					refreshed.addParent(p);
+				}
+		);
+		
 
 		// get the old course
 
@@ -102,7 +106,7 @@ public class CourseServiceImpl implements CourseService {
 			mailNotificationService.sendRegistrationEmail(refreshed);
 		}
 
-		parentRepository.deleteCleanParents();
+//		parentRepository.deleteCleanParents();
 
 		return refreshed;
 	}
