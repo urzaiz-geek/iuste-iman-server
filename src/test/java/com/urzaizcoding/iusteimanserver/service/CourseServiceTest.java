@@ -29,7 +29,6 @@ import com.urzaizcoding.iusteimanserver.domain.registration.student.Parent;
 import com.urzaizcoding.iusteimanserver.domain.registration.student.ParentAttribute;
 import com.urzaizcoding.iusteimanserver.domain.registration.student.Student;
 import com.urzaizcoding.iusteimanserver.repository.CourseRepository;
-import com.urzaizcoding.iusteimanserver.repository.ParentRepository;
 import com.urzaizcoding.iusteimanserver.repository.StudentRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -42,16 +41,13 @@ class CourseServiceTest {
 	private  StudentRepository studentRepository;
 	
 	@Mock
-	private  ParentRepository parentRepository;
-	
-	@Mock
 	private MailNotificationService mailNotificationService;
 	
 	private CourseService underTest;
 	
 	@BeforeEach
 	void setup() throws Exception {
-		underTest = new CourseServiceImpl(courseRepository, studentRepository, parentRepository,mailNotificationService);
+		underTest = new CourseServiceImpl(courseRepository, studentRepository, mailNotificationService);
 	}
 	
 	@Test
