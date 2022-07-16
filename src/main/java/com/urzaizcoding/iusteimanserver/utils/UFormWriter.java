@@ -1,38 +1,35 @@
 package com.urzaizcoding.iusteimanserver.utils;
 
 import java.awt.Color;
-import java.io.ByteArrayInputStream;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.time.LocalDate;
+import java.net.URL;
 import java.time.format.DateTimeFormatter;
 import java.util.Iterator;
-import java.util.Set;
 
-import org.apache.pdfbox.pdmodel.PDDocument;
+import javax.imageio.ImageIO;
+
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 
 import com.urzaizcoding.iusteimanserver.IusteimanServerApplication;
-import com.urzaizcoding.iusteimanserver.domain.Sex;
 import com.urzaizcoding.iusteimanserver.domain.registration.Folder;
 import com.urzaizcoding.iusteimanserver.domain.registration.course.Course;
-import com.urzaizcoding.iusteimanserver.domain.registration.student.LanguageLevel;
-import com.urzaizcoding.iusteimanserver.domain.registration.student.Level;
 import com.urzaizcoding.iusteimanserver.domain.registration.student.Parent;
 import com.urzaizcoding.iusteimanserver.domain.registration.student.ParentAttribute;
 import com.urzaizcoding.iusteimanserver.domain.registration.student.Student;
 
-public class UFormWriter {
+public class UFormWriter implements DocumentWriter {
 	private static final String TEMPLATES_TEMPLATE_FORM_IUSTE_PDF = "/templates/templateFormIUSTE.pdf";
-	private final UPDFWriter writer;
-	private final ByteArrayOutputStream output;
-	private final Folder folder;
-	private final byte[] imageData;
+	private UPDFWriter writer;
+	private ByteArrayOutputStream output;
+	private Folder folder;
+	private byte[] imageData;
 
-	public UFormWriter(Folder folder, byte[] imageData) throws URISyntaxException, Exception {
+	
+	private final void init(Folder folder) throws Exception {
 		this.output = new ByteArrayOutputStream();
 		writer = new UPDFWriterImpl(
 				IusteimanServerApplication.class.getResourceAsStream(TEMPLATES_TEMPLATE_FORM_IUSTE_PDF), output,
@@ -43,9 +40,33 @@ public class UFormWriter {
 		if (folder == null) {
 			throw new IllegalArgumentException("Caanot generate form cause the folder is null");
 		}
-
+		
 		this.folder = folder;
-		this.imageData = imageData;
+	}
+	
+	public UFormWriter(Folder folder) throws Exception {
+		
+		init(folder);
+
+		if (folder.getStudent().getPhotoPath() != null) {
+			// get the data of student picture
+			URL studentPictureUrl = new URL(folder.getStudent().getPhotoPath());
+
+			BufferedImage image = ImageIO.read(studentPictureUrl); // get image from url
+
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+			ImageIO.write(image, "jpg", bos); // fetch the bytes
+			bos.flush();
+
+			this.imageData = bos.toByteArray();
+		}
+
+	}
+
+	public UFormWriter(Folder newFolder, byte[] data) throws Exception {
+		init(newFolder);
+		this.imageData = data;
 	}
 
 	public UPDFWriter getWriter() {
@@ -54,43 +75,6 @@ public class UFormWriter {
 
 	public void endPDf() throws IOException {
 		writer.close();
-	}
-
-	public static void main(String[] args) throws Exception {
-
-		Folder newFolder = new Folder();
-		newFolder.setFolderRegistrationNumber("20220704-1032-10000");
-		newFolder.setCourse(Course.builder().cycle("Licence").faculty("Gestion")
-				.speciality("Maintenance et après Vente automobile").level(3).year("2022/2023").build());
-		newFolder.setStudent(Student.builder().firstName("GHENHAGNE GUEBOUSSI CHAVAQUIHA")
-				.lastName("TRESOR ADIANIE VENCESLAS HOUHA").sex(Sex.MALE).country("CAMEROUNAISE")
-				.birthDate(LocalDate.of(1998, 11, 13)).birthPlace("HOPITAL DE MAIRIE RURALE VERS KOTO")
-				.quarter("BEPANDA CARREFOUR TENDON").email("naruffygolen@gmail.com").contact("690872959")
-				.entranceDiploma("Baccalauréat ESG").diplomaOption("C")
-				.schoolOfGraduation("Institut supérieur des Sciences, des Technologies et de l'Ethique")
-				.frenchLevel(LanguageLevel.builder().writeLevel(Level.GOOD).readLevel(Level.MEDIUM)
-						.speakLevel(Level.NOT_AT_ALL).comprehensionLevel(Level.LITTLE).build())
-				.englishLevel(LanguageLevel.builder().writeLevel(Level.MEDIUM).readLevel(Level.GOOD)
-						.speakLevel(Level.LITTLE).comprehensionLevel(Level.NOT_AT_ALL).build())
-				.parents(Set.of(
-						Parent.builder().names("GUEBOUSSI TEFOSSA EMMANUEL CHAVAQUIHA")
-								.attribute(ParentAttribute.FATHER).contact("670889114").regionOfOrigin("OUEST")
-								.job("RESPONSABLE DE LA CONSOLIDATION").build(),
-						Parent.builder().names("TIOFACK DONGO JUSTINE").attribute(ParentAttribute.MOTHER)
-								.contact("699592077").regionOfOrigin("OUEST").job("ENSEIGNANTE").build(),
-						Parent.builder().names("DONGO GUEBOUSSI GWLADYS SIDOINE").attribute(ParentAttribute.TUTOR)
-								.contact("670755261").regionOfOrigin("OUEST").job("ENSEIGNANTE DE LYCEE").build()))
-				.build());
-		ByteArrayInputStream bis = new ByteArrayInputStream(
-				IusteimanServerApplication.class.getResourceAsStream("/static/logo_IUSTE.png").readAllBytes());
-		UFormWriter service = new UFormWriter(newFolder, bis.readAllBytes());
-
-		PDDocument doc = PDDocument.load(service.generateAndGet());
-
-		doc.save("test.pdf");
-
-		// draw image
-
 	}
 
 	private void writeWhereComplement(String where) throws Exception {
@@ -421,13 +405,13 @@ public class UFormWriter {
 		writer.writeNormal(zone);
 	}
 
+	@Override
 	public byte[] generateAndGet() throws Exception {
-		if(imageData != null) {
+		if (imageData != null) {
 			PDImageXObject imageObject = PDImageXObject.createFromByteArray(writer.getDocument(), imageData,
 					folder.getStudent().getPhotoPath());
 			drawStudentPhoto(imageObject);
 		}
-		
 
 		Course course = folder.getCourse();
 		Student student = folder.getStudent();
@@ -466,8 +450,9 @@ public class UFormWriter {
 				student.getEnglishLevel().getComprehensionLevel().frenchValue());
 
 		writeWhereComplement(student.getSchoolOfGraduation());
-		writeFacultyDetails(course.getFaculty(), course.getSpeciality(), course.getLevel().toString(), course.getCycle());
-		writeDiploma(String.format("%s %s", student.getEntranceDiploma(),student.getDiplomaOption()));
+		writeFacultyDetails(course.getFaculty(), course.getSpeciality(), course.getLevel().toString(),
+				course.getCycle());
+		writeDiploma(String.format("%s %s", student.getEntranceDiploma(), student.getDiplomaOption()));
 		endPDf();
 
 		return output.toByteArray();

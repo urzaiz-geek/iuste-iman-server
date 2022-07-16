@@ -120,7 +120,7 @@ public class FolderServiceImpl implements FolderService {
 	}
 
 	@Override
-	public FileSpec generateForm(@NotNull @NotBlank String folderRegistrationNumber) {
+	public FileSpec generateForm(@NotNull @NotBlank String folderRegistrationNumber) throws Exception {
 		// Get the concerned Folder
 		Folder folder = folderRepository.findByFolderRegistrationNumber(folderRegistrationNumber)
 				.orElseThrow(() -> new ResourceNotFoundException(

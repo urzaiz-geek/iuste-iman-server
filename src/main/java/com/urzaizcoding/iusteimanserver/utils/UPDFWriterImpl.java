@@ -82,7 +82,6 @@ public class UPDFWriterImpl implements UPDFWriter {
 	private void updateMarker(UWritingZone zone) {
 		marker.setX(marker.getX() + zone.getXOffset());
 		marker.setY(marker.getY() + zone.getYOffset());
-		System.out.println(marker);
 	}
 
 	public void writeReset(UWritingZone zone) throws Exception {
@@ -105,7 +104,6 @@ public class UPDFWriterImpl implements UPDFWriter {
 	}
 
 	private void writeZone(UWritingZone zone, boolean useMarker) throws Exception {
-		System.out.println(zone);
 		// move the coursor
 		if (zone.getZoneType() == ZoneContentType.TEXT) {
 			if (useMarker) {

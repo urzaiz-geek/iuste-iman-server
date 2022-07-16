@@ -119,15 +119,15 @@ public class FolderController {
 	}
 
 	@GetMapping(path = { "{folderRegistrationNumber}/form" }, produces = { MediaType.APPLICATION_PDF_VALUE })
-	public ResponseEntity<byte[]> generatePdfForm(@PathVariable @NotNull @NotBlank String folderRegistrationNumder) throws Exception {
+	public ResponseEntity<byte[]> generatePdfForm(@PathVariable @NotNull @NotBlank String folderRegistrationNumber) throws Exception {
 
-		FileSpec fileSpec = folderService.generateForm(folderRegistrationNumder);
+		FileSpec fileSpec = folderService.generateForm(folderRegistrationNumber);
 		return ResponseEntity.ok()
 				.header(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment;filename=%s", fileSpec.fileName()))
 				.contentLength(fileSpec.fileSize()).body(fileSpec.data());
 	}
 
-	@GetMapping(produces = { MediaType.APPLICATION_PDF_VALUE }, path = { "{folderRegistrationNumber}/{quitusId}" })
+	@GetMapping(produces = { MediaType.APPLICATION_PDF_VALUE }, path = { "{folderRegistrationNumber}/quitus/{quitusId}" })
 	public ResponseEntity<byte[]> generatePdfQuitus(@PathVariable @NotNull @NotBlank String folderRegistrationNumber,
 			@PathVariable @NotNull Integer quitusId) throws Exception {
 

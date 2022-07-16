@@ -30,7 +30,7 @@ public interface FolderService {
 	FileSpec getPartFile(@NotNull @NotBlank String folderRegistrationNumber, @NotNull Long partId)
 			throws Exception;
 
-	FileSpec generateForm(@NotNull @NotBlank String folderRegistrationNumder) throws ResourceNotFoundException;
+	FileSpec generateForm(@NotNull @NotBlank String folderRegistrationNumder) throws ResourceNotFoundException, Exception;
 
 	FileSpec generateQuitus(@NotNull @NotBlank String folderRegistrationNumber, @NotNull Integer quitusId)
 			throws ResourceNotFoundException;

@@ -72,23 +72,27 @@ public class StudentDTO {
 	private  final LanguageLevel englishLevel;
 
 	private  final String photoPath;
+	
+	private String folderRegistrationNumber;
 
 	private  final Set<ParentDTO> parents;
-	
-	
 
 	@Builder
-	private StudentDTO(Long id, String firstName, String lastName, LocalDate birthDate, Sex sex,
-			String birthPlace, String country, String contact, String email, String registrationId,
-			String regionOfOrigin, String entranceDiploma, String yearOfGraduation, String schoolOfGraduation,
-			String diplomaOption, String countryOfGraduation, LanguageLevel frenchLevel, LanguageLevel englishLevel,
-			String photoPath, Set<ParentDTO> parents) {
+	private StudentDTO(Long id, @NotNull String firstName, String lastName, @NotNull LocalDate birthDate,
+			@NotNull Sex sex, @NotNull String quarter, @NotNull String birthPlace, @NotNull String country,
+			@NotNull String contact, @NotNull @Email String email, String registrationId,
+			@NotNull String regionOfOrigin, @NotNull String entranceDiploma,
+			@NotNull @Size(max = 4) String yearOfGraduation, @NotNull String schoolOfGraduation, String diplomaOption,
+			@NotNull String countryOfGraduation, @Valid @NotNull LanguageLevel frenchLevel,
+			@Valid @NotNull LanguageLevel englishLevel, String photoPath, String folderRegistrationNumber,
+			Set<ParentDTO> parents) {
 		super();
 		this.id = id;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.birthDate = birthDate;
 		this.sex = sex;
+		this.quarter = quarter;
 		this.birthPlace = birthPlace;
 		this.country = country;
 		this.contact = contact;
@@ -103,8 +107,11 @@ public class StudentDTO {
 		this.frenchLevel = frenchLevel;
 		this.englishLevel = englishLevel;
 		this.photoPath = photoPath;
+		this.folderRegistrationNumber = folderRegistrationNumber;
 		this.parents = parents;
 	}
+	
+	
 	
 
 }
