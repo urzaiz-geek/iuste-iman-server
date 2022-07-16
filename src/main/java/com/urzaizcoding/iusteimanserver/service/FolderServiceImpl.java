@@ -23,7 +23,7 @@ import com.urzaizcoding.iusteimanserver.repository.FolderRepository;
 @Service
 public class FolderServiceImpl implements FolderService {
 
-	private static String NAME_FORMAT = "part_f%d_%s.%s";
+	private static String NAME_FORMAT = "part_f%d_%s";
 
 	private static String DATE_TIME_FORMAT = "yyyyMMdd_hhmmss";
 
@@ -182,8 +182,7 @@ public class FolderServiceImpl implements FolderService {
 
 			@Override
 			public String fileName() {
-				return String.format(NAME_FORMAT, newPart.getFolder().getId(), formater.format(newPart.getUploadDate()),
-						extension);
+				return String.format(NAME_FORMAT, newPart.getFolder().getId(), formater.format(newPart.getUploadDate()));
 			}
 
 			@Override
@@ -193,7 +192,7 @@ public class FolderServiceImpl implements FolderService {
 
 			@Override
 			public String fileType() {
-				return null;
+				return extension;
 			}
 		};
 
