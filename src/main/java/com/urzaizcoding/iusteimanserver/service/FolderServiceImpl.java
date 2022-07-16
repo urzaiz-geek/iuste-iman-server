@@ -1,5 +1,6 @@
 package com.urzaizcoding.iusteimanserver.service;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -28,14 +29,16 @@ public class FolderServiceImpl implements FolderService {
 
 	private final FolderRepository folderRepository;
 	private final MailNotificationService mailNotificationService;
-	private final StorageService storageService;
+	private final ImageStorageService storageService;
+	private final PDFGeneratorService pdfGeneratorService;
 
 	public FolderServiceImpl(FolderRepository folderRepository, MailNotificationService mailNotificationService,
-			StorageService storageService) {
+			ImageStorageService storageService, PDFGeneratorService pdfGeneratorService) {
 		super();
 		this.folderRepository = folderRepository;
 		this.mailNotificationService = mailNotificationService;
 		this.storageService = storageService;
+		this.pdfGeneratorService = pdfGeneratorService;
 	}
 
 	@Override
@@ -101,26 +104,32 @@ public class FolderServiceImpl implements FolderService {
 	@Override
 	public FileSpec getPartFile(@NotNull @NotBlank String folderRegistrationNumber, @NotNull Long partId)
 			throws Exception {
-		
-		//we query the folder first
+
+		// we query the folder first
 		Folder folderEntity = folderRepository.findByFolderRegistrationNumber(folderRegistrationNumber)
 				.orElseThrow(() -> new ResourceNotFoundException(
 						String.format("The folder referenced by the registration number %s does not exists",
 								folderRegistrationNumber)));
 
-		//we then query the part in that folder
+		// we then query the part in that folder
 		Part part = folderEntity.getParts().stream().filter(p -> p.getId().equals(partId)).findFirst()
 				.orElseThrow(() -> new ResourceNotFoundException(
-						String.format("The part referenced by the id %d does not exists",
-								partId)));
-		
+						String.format("The part referenced by the id %d does not exists", partId)));
+
 		return storageService.getFile(part.getArchivePath());
 	}
 
 	@Override
-	public FileSpec generateForm(@NotNull @NotBlank String folderRegistrationNumder) {
-		// TODO Auto-generated method stub
-		return null;
+	public FileSpec generateForm(@NotNull @NotBlank String folderRegistrationNumber) {
+		// Get the concerned Folder
+		Folder folder = folderRepository.findByFolderRegistrationNumber(folderRegistrationNumber)
+				.orElseThrow(() -> new ResourceNotFoundException(
+						String.format("The folder referenced by the registration number %s does not exists",
+								folderRegistrationNumber)));
+		
+		FileSpec file = pdfGeneratorService.generateForm(folder);
+		
+		return file;
 	}
 
 	@Override
@@ -178,7 +187,12 @@ public class FolderServiceImpl implements FolderService {
 			}
 
 			@Override
-			public byte[] data() {
+			public byte[] data() throws IOException {
+				return part.getBytes();
+			}
+
+			@Override
+			public String fileType() {
 				return null;
 			}
 		};
@@ -189,7 +203,7 @@ public class FolderServiceImpl implements FolderService {
 
 		// Save on storage
 
-		String archivePath = storageService.saveFile(path, fileSpec, part.getInputStream());
+		String archivePath = storageService.saveFile(path, fileSpec);
 
 		// update the archive path
 
