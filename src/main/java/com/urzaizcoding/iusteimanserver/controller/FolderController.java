@@ -111,15 +111,24 @@ public class FolderController {
 
 	}
 
+	@PutMapping(path = { "{folderRegistrationNumber}/parts/{id}/status" })
+	public ResponseEntity<PartDTO> archivatePart(@PathVariable @NotBlank String folderRegistrationNumber,
+			@PathVariable @NotNull Long id) throws Exception {
+
+		Part partEntity = folderService.archivatePart(folderRegistrationNumber,id);
+		return ResponseEntity.ok(mapper.partToPartDTO(partEntity));
+	}
+
 	@DeleteMapping(path = { "{folderRegistrationNumber}/parts/{id}" })
 	public ResponseEntity<Void> deletePart(@NotNull @NotBlank @PathVariable String folderRegistrationNumber,
 			@NotNull @PathVariable Long id) throws Exception {
-		folderService.deletePart(folderRegistrationNumber,id);
+		folderService.deletePart(folderRegistrationNumber, id);
 		return ResponseEntity.ok().build();
 	}
 
 	@GetMapping(path = { "{folderRegistrationNumber}/form" }, produces = { MediaType.APPLICATION_PDF_VALUE })
-	public ResponseEntity<byte[]> generatePdfForm(@PathVariable @NotNull @NotBlank String folderRegistrationNumber) throws Exception {
+	public ResponseEntity<byte[]> generatePdfForm(@PathVariable @NotNull @NotBlank String folderRegistrationNumber)
+			throws Exception {
 
 		FileSpec fileSpec = folderService.generateForm(folderRegistrationNumber);
 		return ResponseEntity.ok()
@@ -127,9 +136,10 @@ public class FolderController {
 				.contentLength(fileSpec.fileSize()).body(fileSpec.data());
 	}
 
-	@GetMapping(produces = { MediaType.APPLICATION_PDF_VALUE }, path = { "{folderRegistrationNumber}/quitus/{quitusId}" })
+	@GetMapping(produces = { MediaType.APPLICATION_PDF_VALUE }, path = {
+			"{folderRegistrationNumber}/quitus/{quitusId}" })
 	public ResponseEntity<byte[]> generatePdfQuitus(@PathVariable @NotNull @NotBlank String folderRegistrationNumber,
-			@PathVariable @NotNull Integer quitusId) throws Exception {
+			@PathVariable @NotNull Long quitusId) throws Exception {
 
 		FileSpec fileSpec = folderService.generateQuitus(folderRegistrationNumber, quitusId);
 		return ResponseEntity.ok()

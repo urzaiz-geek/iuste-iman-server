@@ -104,8 +104,8 @@ public class Course implements Serializable {
 		fees.stream().filter(f -> f.getType() == FeesType.DEFAULT).forEach(f -> {
 			Quitus q = folder.newQuitus();
 			q.setAmount(f.getAmount());
-			q.setObject(q.getObject());
-			q.setPaiementPlace("Etablissement");
+			q.setObject(f.getObject());
+			q.setPaymentPlace("Etablissement");
 		});
 
 		folder.setCreationDate(LocalDateTime.now(AppConfigurer.appTimeZoneId()));

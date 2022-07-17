@@ -3,7 +3,6 @@ package com.urzaizcoding.iusteimanserver.utils;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.net.URL;
 import java.time.format.DateTimeFormatter;
 import java.util.Iterator;
@@ -21,32 +20,12 @@ import com.urzaizcoding.iusteimanserver.domain.registration.student.Parent;
 import com.urzaizcoding.iusteimanserver.domain.registration.student.ParentAttribute;
 import com.urzaizcoding.iusteimanserver.domain.registration.student.Student;
 
-public class UFormWriter implements DocumentWriter {
+public class UFormWriter extends FormDocumentWriter {
 	private static final String TEMPLATES_TEMPLATE_FORM_IUSTE_PDF = "/templates/templateFormIUSTE.pdf";
-	private UPDFWriter writer;
-	private ByteArrayOutputStream output;
-	private Folder folder;
 	private byte[] imageData;
 
-	
-	private final void init(Folder folder) throws Exception {
-		this.output = new ByteArrayOutputStream();
-		writer = new UPDFWriterImpl(
-				IusteimanServerApplication.class.getResourceAsStream(TEMPLATES_TEMPLATE_FORM_IUSTE_PDF), output,
-				Mode.APPEND_TEXT);
-
-		writer.setCurrentPage(0);
-
-		if (folder == null) {
-			throw new IllegalArgumentException("Caanot generate form cause the folder is null");
-		}
-		
-		this.folder = folder;
-	}
-	
 	public UFormWriter(Folder folder) throws Exception {
-		
-		init(folder);
+		super(folder, IusteimanServerApplication.class.getResourceAsStream(TEMPLATES_TEMPLATE_FORM_IUSTE_PDF));
 
 		if (folder.getStudent().getPhotoPath() != null) {
 			// get the data of student picture
@@ -65,25 +44,18 @@ public class UFormWriter implements DocumentWriter {
 	}
 
 	public UFormWriter(Folder newFolder, byte[] data) throws Exception {
-		init(newFolder);
+		super(newFolder, IusteimanServerApplication.class.getResourceAsStream(TEMPLATES_TEMPLATE_FORM_IUSTE_PDF));
 		this.imageData = data;
 	}
 
-	public UPDFWriter getWriter() {
-		return writer;
-	}
-
-	public void endPDf() throws IOException {
-		writer.close();
-	}
 
 	private void writeWhereComplement(String where) throws Exception {
 		UWritingZone zone = null;
 
 		Color color = new Color(85, 107, 47);
 		PDFont font = PDType1Font.TIMES_BOLD;
-		zone = UWritingZoneImpl.builder().zoneContentType(ZoneContentType.TEXT).text(where).isMultiline(false)
-				.fontSize(10.5f).color(color).pdfont(font).xOffset(191).yOffset(270.5f).build();
+		zone = UWritingZoneImpl.builder().zoneContentType(ZoneContentType.TEXT).textCase(Case.CAPITALIZE).text(where)
+				.isMultiline(false).fontSize(10.5f).color(color).pdfont(font).xOffset(191).yOffset(270.5f).build();
 
 		writer.resetMarker();
 		writer.writeReset(zone);
@@ -143,16 +115,17 @@ public class UFormWriter implements DocumentWriter {
 
 		// FatherNames
 
-		zone = UWritingZoneImpl.builder().zoneContentType(ZoneContentType.TEXT).text(fatherNames).isMultiline(true)
-				.leading(14.5f).fontSize(10.5f).pdfont(font).textMaxLength(22).xOffset(82)
+		zone = UWritingZoneImpl.builder().zoneContentType(ZoneContentType.TEXT).text(fatherNames).textCase(Case.UPPER)
+				.isMultiline(true).leading(14.5f).fontSize(10.5f).pdfont(font).textMaxLength(22).xOffset(82)
 				.yOffset(writer.getCurrentPageHeight() * 0.5f + 24.1f).build();
 		writer.resetMarker();
 		writer.writeReset(zone);
 
 		// Father function
 
-		zone = UWritingZoneImpl.builder().zoneContentType(ZoneContentType.TEXT).text(function).isMultiline(true)
-				.leading(14.5f).fontSize(9.5f).pdfont(font).textMaxLength(22).xOffset(77).yOffset(0).build();
+		zone = UWritingZoneImpl.builder().zoneContentType(ZoneContentType.TEXT).text(function).textCase(Case.UPPER)
+				.isMultiline(true).leading(14.5f).fontSize(9.5f).pdfont(font).textMaxLength(22).xOffset(77).yOffset(0)
+				.build();
 
 		writer.writeNormal(zone, true);
 
@@ -178,16 +151,17 @@ public class UFormWriter implements DocumentWriter {
 
 		// MotherNames
 
-		zone = UWritingZoneImpl.builder().zoneContentType(ZoneContentType.TEXT).text(motherNames).isMultiline(true)
-				.leading(14.5f).fontSize(10.5f).pdfont(font).textMaxLength(21).xOffset(94)
+		zone = UWritingZoneImpl.builder().textCase(Case.UPPER).zoneContentType(ZoneContentType.TEXT).text(motherNames)
+				.isMultiline(true).leading(14.5f).fontSize(10.5f).pdfont(font).textMaxLength(21).xOffset(94)
 				.yOffset(writer.getCurrentPageHeight() * 0.5f + -13f).build();
 		writer.resetMarker();
 		writer.writeReset(zone);
 
 		// Mother function
 
-		zone = UWritingZoneImpl.builder().zoneContentType(ZoneContentType.TEXT).text(function).isMultiline(true)
-				.leading(14.5f).fontSize(9.5f).pdfont(font).textMaxLength(22).xOffset(71).yOffset(0).build();
+		zone = UWritingZoneImpl.builder().textCase(Case.UPPER).zoneContentType(ZoneContentType.TEXT).text(function)
+				.isMultiline(true).leading(14.5f).fontSize(9.5f).pdfont(font).textMaxLength(22).xOffset(71).yOffset(0)
+				.build();
 
 		writer.writeNormal(zone, true);
 
@@ -213,16 +187,17 @@ public class UFormWriter implements DocumentWriter {
 
 		// TutorNames
 
-		zone = UWritingZoneImpl.builder().zoneContentType(ZoneContentType.TEXT).text(tutorNames).isMultiline(true)
-				.leading(14.5f).fontSize(10.5f).pdfont(font).textMaxLength(21).xOffset(90)
+		zone = UWritingZoneImpl.builder().zoneContentType(ZoneContentType.TEXT).textCase(Case.UPPER).text(tutorNames)
+				.isMultiline(true).leading(14.5f).fontSize(10.5f).pdfont(font).textMaxLength(21).xOffset(90)
 				.yOffset(writer.getCurrentPageHeight() * 0.5f + -47f).build();
 		writer.resetMarker();
 		writer.writeReset(zone);
 
 		// Tutor function
 
-		zone = UWritingZoneImpl.builder().zoneContentType(ZoneContentType.TEXT).text(function).isMultiline(true)
-				.leading(14.5f).fontSize(9.5f).pdfont(font).textMaxLength(22).xOffset(73).yOffset(0).build();
+		zone = UWritingZoneImpl.builder().zoneContentType(ZoneContentType.TEXT).textCase(Case.UPPER).text(function)
+				.isMultiline(true).leading(14.5f).fontSize(9.5f).pdfont(font).textMaxLength(22).xOffset(73).yOffset(0)
+				.build();
 
 		writer.writeNormal(zone, true);
 
@@ -234,8 +209,8 @@ public class UFormWriter implements DocumentWriter {
 
 		// tutor region
 
-		zone = UWritingZoneImpl.builder().zoneContentType(ZoneContentType.TEXT).text(region).isMultiline(false)
-				.fontSize(10f).pdfont(font).xOffset(43).yOffset(0).build();
+		zone = UWritingZoneImpl.builder().zoneContentType(ZoneContentType.TEXT).textCase(Case.UPPER).text(region)
+				.isMultiline(false).fontSize(10f).pdfont(font).xOffset(43).yOffset(0).build();
 
 		writer.writeNormal(zone, true);
 	}
@@ -311,9 +286,9 @@ public class UFormWriter implements DocumentWriter {
 
 		// LastNames
 
-		zone = UWritingZoneImpl.builder().zoneContentType(ZoneContentType.TEXT).text(lastNames).isMultiline(true)
-				.leading(14.5f).fontSize(11).pdfont(PDType1Font.TIMES_BOLD).textMaxLength(28).xOffset(298.5f).yOffset(0)
-				.build();
+		zone = UWritingZoneImpl.builder().zoneContentType(ZoneContentType.TEXT).text(lastNames).textCase(Case.UPPER)
+				.isMultiline(true).leading(14.5f).fontSize(11).pdfont(PDType1Font.TIMES_BOLD).textMaxLength(28)
+				.xOffset(298.5f).yOffset(0).build();
 
 		writer.writeReset(zone);
 
@@ -326,19 +301,19 @@ public class UFormWriter implements DocumentWriter {
 
 		// Country
 
-		zone = UWritingZoneImpl.builder().zoneContentType(ZoneContentType.TEXT).text(country).isMultiline(false)
-				.fontSize(11).pdfont(font).xOffset(-168).yOffset(0).build();
+		zone = UWritingZoneImpl.builder().zoneContentType(ZoneContentType.TEXT).text(country).textCase(Case.UPPER)
+				.isMultiline(false).fontSize(11).pdfont(font).xOffset(-168).yOffset(0).build();
 
 		writer.writeNormal(zone);
 
 		// BirthPLace
 
-		zone = UWritingZoneImpl.builder().zoneContentType(ZoneContentType.TEXT).text(birthPlace).isMultiline(false)
-				.fontSize(10.1f).pdfont(font).xOffset(-220).yOffset(0).build();
+		zone = UWritingZoneImpl.builder().zoneContentType(ZoneContentType.TEXT).text(birthPlace).textCase(Case.UPPER)
+				.isMultiline(false).fontSize(10.1f).pdfont(font).xOffset(-220).yOffset(0).build();
 
 		writer.writeNormal(zone);
 
-		// BirthPLace
+		// BirthDate
 
 		zone = UWritingZoneImpl.builder().zoneContentType(ZoneContentType.TEXT).text(birthDate).isMultiline(false)
 				.fontSize(10.1f).pdfont(font).xOffset(-70).yOffset(0).build();
@@ -368,8 +343,8 @@ public class UFormWriter implements DocumentWriter {
 
 		// Quarter
 
-		zone = UWritingZoneImpl.builder().zoneContentType(ZoneContentType.TEXT).text(quarter).fontSize(9f).pdfont(font)
-				.textMaxLength(28).xOffset(205).yOffset(-24).build();
+		zone = UWritingZoneImpl.builder().zoneContentType(ZoneContentType.TEXT).text(quarter).textCase(Case.UPPER)
+				.fontSize(9f).pdfont(font).textMaxLength(28).xOffset(205).yOffset(-24).build();
 
 		writer.writeReset(zone);
 	}
@@ -399,7 +374,7 @@ public class UFormWriter implements DocumentWriter {
 		writer.writeNormal(zone);
 
 		// Names
-		zone = UWritingZoneImpl.builder().zoneContentType(ZoneContentType.TEXT).text(names)
+		zone = UWritingZoneImpl.builder().zoneContentType(ZoneContentType.TEXT).text(names).textCase(Case.UPPER)
 				.pdfont(PDType1Font.TIMES_BOLD).color(null).fontSize(11).textMaxLength(28).isMultiline(true)
 				.leading(14.5f).xOffset(-234).yOffset(-18).build();
 		writer.writeNormal(zone);
@@ -453,7 +428,7 @@ public class UFormWriter implements DocumentWriter {
 		writeFacultyDetails(course.getFaculty(), course.getSpeciality(), course.getLevel().toString(),
 				course.getCycle());
 		writeDiploma(String.format("%s %s", student.getEntranceDiploma(), student.getDiplomaOption()));
-		endPDf();
+		endPDF();
 
 		return output.toByteArray();
 	}

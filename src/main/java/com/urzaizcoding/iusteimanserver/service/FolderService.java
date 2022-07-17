@@ -32,9 +32,11 @@ public interface FolderService {
 
 	FileSpec generateForm(@NotNull @NotBlank String folderRegistrationNumder) throws ResourceNotFoundException, Exception;
 
-	FileSpec generateQuitus(@NotNull @NotBlank String folderRegistrationNumber, @NotNull Integer quitusId)
-			throws ResourceNotFoundException;
+	FileSpec generateQuitus(@NotNull @NotBlank String folderRegistrationNumber, @NotNull Long quitusId)
+			throws ResourceNotFoundException,Exception;
 
 	void deletePart(@NotNull @NotBlank String folderRegistrationNumber, @NotNull Long id) throws ResourceNotFoundException;
+
+	Part archivatePart(@NotBlank String folderRegistrationNumber, @NotNull Long id);
 
 }

@@ -17,5 +17,6 @@ public interface UWritingZone {
 	ZoneContentType getZoneType();
 	float getLeading();
 	boolean iMultiLined();
+	Case getTextCase();
 	
 }
