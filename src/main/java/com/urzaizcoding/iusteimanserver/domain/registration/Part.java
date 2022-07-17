@@ -61,12 +61,14 @@ public class Part implements Serializable {
 	private Long size;
 
 	private String archivePath;
+	
+	private boolean archived;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	private Folder folder;
 
 	public Part(Long id, String name, String description, String fileType, LocalDateTime uploadDate, Long size,
-			String archivePath) {
+			String archivePath, boolean archived) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -75,6 +77,7 @@ public class Part implements Serializable {
 		this.uploadDate = uploadDate;
 		this.size = size;
 		this.archivePath = archivePath;
+		this.archived = archived;
 	}
 
 	/***

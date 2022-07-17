@@ -12,8 +12,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -22,6 +24,7 @@ import lombok.ToString;
 
 @Getter
 @Setter
+@NoArgsConstructor
 @ToString(callSuper = true)
 @EqualsAndHashCode
 public class Quitus implements Serializable{
@@ -44,10 +47,27 @@ public class Quitus implements Serializable{
 	private Boolean status;
 	private Integer amount;
 	@Column(length = 150)
-	private String paiementPlace;
+	private String paymentPlace;
+	
 	
 	@ManyToOne(fetch = FetchType.EAGER)
 	private Folder folder;
+
+	@Builder
+	public Quitus(Long id, String object, Boolean status, Integer amount, String paymentPlace, Folder folder) {
+		super();
+		this.id = id;
+		this.object = object;
+		this.status = status;
+		this.amount = amount;
+		this.paymentPlace = paymentPlace;
+		this.folder = folder;
+	}
+	
+	public String getQuitusNumber() {
+		return String.format("%s-%d", folder.getFolderRegistrationNumber(),getId());
+	}
+	
 	
 	
 }

@@ -120,7 +120,7 @@ public class FolderServiceImpl implements FolderService {
 	}
 
 	@Override
-	public FileSpec generateForm(@NotNull @NotBlank String folderRegistrationNumber) {
+	public FileSpec generateForm(@NotNull @NotBlank String folderRegistrationNumber) throws Exception {
 		// Get the concerned Folder
 		Folder folder = folderRepository.findByFolderRegistrationNumber(folderRegistrationNumber)
 				.orElseThrow(() -> new ResourceNotFoundException(
@@ -133,9 +133,12 @@ public class FolderServiceImpl implements FolderService {
 	}
 
 	@Override
-	public FileSpec generateQuitus(@NotNull @NotBlank String folderRegistrationNumber, @NotNull Integer quitusId) {
-		// TODO Auto-generated method stub
-		return null;
+	public FileSpec generateQuitus(@NotNull @NotBlank String folderRegistrationNumber, @NotNull Long quitusId) throws Exception{
+		Folder folder = folderRepository.findByFolderRegistrationNumber(folderRegistrationNumber).orElseThrow(() -> new ResourceNotFoundException(
+						String.format("The folder referenced by the registration number %s does not exists",
+								folderRegistrationNumber)));
+		
+		return pdfGeneratorService.generateQuitus(folder, quitusId);
 	}
 
 	@Override
@@ -216,6 +219,12 @@ public class FolderServiceImpl implements FolderService {
 			throws ResourceNotFoundException {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public Part archivatePart(@NotBlank String folderRegistrationNumber, @NotNull Long id) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

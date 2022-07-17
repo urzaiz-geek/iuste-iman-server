@@ -7,6 +7,7 @@ import org.apache.pdfbox.pdmodel.font.PDType1Font;
 
 public class UWritingZoneImpl implements UWritingZone {
 	private ZoneContentType zoneContentType;
+	private Case tcase;
 	private String text;
 	private int textMaxLength;
 	private Alignment alignment;
@@ -19,11 +20,12 @@ public class UWritingZoneImpl implements UWritingZone {
 	private Color color;
 	private PDFont pdfont;
 
-	public UWritingZoneImpl(ZoneContentType zoneContentType, String text, int textMaxLength, Alignment alignment,
+	public UWritingZoneImpl(ZoneContentType zoneContentType,Case tcase, String text, int textMaxLength, Alignment alignment,
 			ImageZone pdImageXObject, boolean multiline, float xOffset, float yOffset, float fontSize, float leading,
 			Color color, PDFont pdfont) {
 		super();
 		this.zoneContentType = zoneContentType;
+		this.tcase = tcase == null? Case.NOTHING:tcase;
 		this.text = text;
 		this.textMaxLength = textMaxLength;
 		this.alignment = alignment;
@@ -121,14 +123,21 @@ public class UWritingZoneImpl implements UWritingZone {
 	public final void setTextMaxLength(int textMaxLength) {
 		this.textMaxLength = textMaxLength;
 	}
-
-	public static UWrittingZoneImplBuilder builder() {
-		return new UWrittingZoneImplBuilder();
+	
+	@Override
+	public Case getTextCase() {
+		// TODO Auto-generated method stub
+		return tcase;
 	}
 
-	public static class UWrittingZoneImplBuilder {
+	public static UWritingZoneImplBuilder builder() {
+		return new UWritingZoneImplBuilder();
+	}
+
+	public static class UWritingZoneImplBuilder {
 
 		private ZoneContentType zoneContentType;
+		private Case tcase;
 		private String text;
 		private int textMaxLength;
 		private Alignment alignment;
@@ -155,22 +164,31 @@ public class UWritingZoneImpl implements UWritingZone {
 				}
 			}
 
-			return new UWritingZoneImpl(zoneContentType, text, textMaxLength, alignment, pdImageXObject, multiline,
+			return new UWritingZoneImpl(zoneContentType, tcase,text, textMaxLength, alignment, pdImageXObject, multiline,
 					xOffset, yOffset, fontSize, leading, color, pdfont);
 
 		}
 
-		public UWrittingZoneImplBuilder zoneContentType(ZoneContentType type) {
+		public UWritingZoneImplBuilder zoneContentType(ZoneContentType type) {
 			this.zoneContentType = type;
 			return this;
 		}
+		
+		public UWritingZoneImplBuilder textCase(Case tcase) {
+			if(tcase == null) {
+				this.tcase = Case.NOTHING;
+			}else {
+				this.tcase = tcase;
+			}
+			return this;
+		}
 
-		public UWrittingZoneImplBuilder text(String text) {
+		public UWritingZoneImplBuilder text(String text) {
 			this.text = text;
 			return this;
 		}
 
-		public UWrittingZoneImplBuilder textMaxLength(int max) {
+		public UWritingZoneImplBuilder textMaxLength(int max) {
 			if (max < 0) {
 				return this;
 			}
@@ -178,12 +196,12 @@ public class UWritingZoneImpl implements UWritingZone {
 			return this;
 		}
 
-		public UWrittingZoneImplBuilder alignment(Alignment alignment) {
+		public UWritingZoneImplBuilder alignment(Alignment alignment) {
 			this.alignment = alignment;
 			return this;
 		}
 
-		public UWrittingZoneImplBuilder leading(float leading) {
+		public UWritingZoneImplBuilder leading(float leading) {
 			if (leading < 0) {
 				return this;
 			}
@@ -192,37 +210,37 @@ public class UWritingZoneImpl implements UWritingZone {
 			return this;
 		}
 
-		public UWrittingZoneImplBuilder pdImageZone(ImageZone image) {
+		public UWritingZoneImplBuilder pdImageZone(ImageZone image) {
 			this.pdImageXObject = image;
 			return this;
 		}
 
-		public UWrittingZoneImplBuilder xOffset(float offset) {
+		public UWritingZoneImplBuilder xOffset(float offset) {
 			this.xOffset = offset;
 			return this;
 		}
 
-		public UWrittingZoneImplBuilder yOffset(float offset) {
+		public UWritingZoneImplBuilder yOffset(float offset) {
 			this.yOffset = offset;
 			return this;
 		}
 
-		public UWrittingZoneImplBuilder color(Color color) {
+		public UWritingZoneImplBuilder color(Color color) {
 			this.color = color == null ? Color.BLACK : color;
 			return this;
 		}
 
-		public UWrittingZoneImplBuilder pdfont(PDFont font) {
+		public UWritingZoneImplBuilder pdfont(PDFont font) {
 			this.pdfont = font == null ? PDType1Font.COURIER : font;
 			return this;
 		}
 
-		public UWrittingZoneImplBuilder fontSize(float size) {
+		public UWritingZoneImplBuilder fontSize(float size) {
 			this.fontSize = size;
 			return this;
 		}
 
-		public UWrittingZoneImplBuilder isMultiline(boolean multi) {
+		public UWritingZoneImplBuilder isMultiline(boolean multi) {
 			this.multiline = multi;
 			return this;
 		}
@@ -236,6 +254,8 @@ public class UWritingZoneImpl implements UWritingZone {
 				+ multiline + ", xOffset=" + xOffset + ", yOffset=" + yOffset + ", fontSize=" + fontSize + ", leading="
 				+ leading + ", color=" + color + ", pdfont=" + pdfont + "]";
 	}
+
+	
 	
 
 }

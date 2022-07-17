@@ -41,7 +41,9 @@ public interface MapStructMapper {
 
 	Parent parentDTOToParent(ParentDTO parentResource);
 
-	@Mappings(@Mapping(target = "id", source = "student.id"))
+	@Mappings({@Mapping(target = "id", source = "student.id"),
+			@Mapping(target = "folderRegistrationNumber", source = "folder.folderRegistrationNumber")}
+			)
 	StudentDTO studentToStudentDTO(Student student);
 
 	Student studentDTOToStudent(StudentDTO studentResource);

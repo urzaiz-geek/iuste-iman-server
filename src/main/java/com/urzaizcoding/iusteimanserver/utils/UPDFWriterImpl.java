@@ -1,6 +1,5 @@
 package com.urzaizcoding.iusteimanserver.utils;
 
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -20,6 +19,13 @@ public class UPDFWriterImpl implements UPDFWriter {
 	private PDPage currentPage;
 	private UMarker marker;
 	private boolean textEnded = true;
+	private float leading;
+	
+	static {
+		//disable logging
+		java.util.logging.Logger.getLogger("org.apache.pdfbox")
+		.setLevel(java.util.logging.Level.OFF);
+	}
 
 	{
 		marker = new UMarker();
@@ -46,9 +52,9 @@ public class UPDFWriterImpl implements UPDFWriter {
 			this.document = PDDocument.load(input);
 		}
 	}
-	
+
 	public UPDFWriterImpl(InputStream input, String output, Mode mode) throws Exception {
-		this(input,new FileOutputStream(new File(output)),mode);
+		this(input, new FileOutputStream(new File(output)), mode);
 	}
 
 	public UPDFWriterImpl(String output, Mode mode) throws Exception {
@@ -63,7 +69,7 @@ public class UPDFWriterImpl implements UPDFWriter {
 	}
 
 	public void writeNormal(UWritingZone zone, boolean useMarker) throws Exception {
-		if (contentStream == null)
+		if (contentStream == null || zone == null)
 			return;
 		if (textEnded && zone.getZoneType() == ZoneContentType.TEXT) {
 			contentStream.beginText();
@@ -80,13 +86,14 @@ public class UPDFWriterImpl implements UPDFWriter {
 	}
 
 	private void updateMarker(UWritingZone zone) {
+		if (zone == null)
+			return;
 		marker.setX(marker.getX() + zone.getXOffset());
 		marker.setY(marker.getY() + zone.getYOffset());
-		System.out.println(marker);
 	}
 
 	public void writeReset(UWritingZone zone) throws Exception {
-		if (contentStream == null)
+		if (contentStream == null || zone == null)
 			return;
 
 		if (zone.getZoneType() == ZoneContentType.TEXT) {
@@ -105,26 +112,58 @@ public class UPDFWriterImpl implements UPDFWriter {
 	}
 
 	private void writeZone(UWritingZone zone, boolean useMarker) throws Exception {
-		System.out.println(zone);
+		if (zone == null)
+			return;
 		// move the coursor
 		if (zone.getZoneType() == ZoneContentType.TEXT) {
 			if (useMarker) {
 				contentStream.newLineAtOffset(zone.getXOffset() + marker.getX(), zone.getYOffset() + marker.getY());
 			} else {
-				contentStream.newLineAtOffset(zone.getXOffset(), zone.getYOffset());
+				if(zone.getXOffset() != 0.0 || zone.getYOffset() != 0.0)
+					contentStream.newLineAtOffset(zone.getXOffset(), zone.getYOffset());
 			}
 			// configuring contentStream
 			contentStream.setFont(zone.getFont(), zone.getFontSize());
-			contentStream.setLeading(zone.getLeading());
+			contentStream.setLeading(zone.getLeading() != 0? zone.getLeading():leading);
 			contentStream.setNonStrokingColor(zone.getColor());
+
+			String textToDisplay = null;
+
+			// check if the zone has not Case properties
+
+			if (zone.getTextCase() != Case.NOTHING) {
+				switch (zone.getTextCase()) {
+				case UPPER: {
+					// uppercase
+					textToDisplay = zone.getText().toUpperCase();
+				}
+					break;
+				case LOWER: {
+					// lowercase
+					textToDisplay = zone.getText().toLowerCase();
+				}
+					break;
+
+				case CAPITALIZE: {
+					// capitalize
+					textToDisplay = zone.getText().substring(0, 1).toUpperCase()
+							.concat(zone.getText().substring(1).toLowerCase());
+				}
+					break;
+				default:
+					break;
+				}
+			} else {
+				textToDisplay = zone.getText();
+			}
 
 			// check if the text is multiline
 			if (zone.iMultiLined() && zone.getTextMaxLineLength() < zone.getText().length()) {
-				contentStream.showText(zone.getText().substring(0, zone.getTextMaxLineLength()) + "-");
+				contentStream.showText(textToDisplay.substring(0, zone.getTextMaxLineLength()) + "-");
 				contentStream.newLine();
-				contentStream.showText(zone.getText().substring(zone.getTextMaxLineLength()));
+				contentStream.showText(textToDisplay.substring(zone.getTextMaxLineLength()));
 			} else {
-				contentStream.showText(zone.getText());
+				contentStream.showText(textToDisplay);
 			}
 		} else {
 			contentStream.drawImage(zone.getImageObject().getImage(), zone.getXOffset(), zone.getYOffset(),
@@ -161,6 +200,7 @@ public class UPDFWriterImpl implements UPDFWriter {
 	public void flush() throws IOException {
 		if (!textEnded) {
 			contentStream.endText();
+			textEnded = true;
 		}
 		contentStream.close();
 		document.save(output);
@@ -189,6 +229,46 @@ public class UPDFWriterImpl implements UPDFWriter {
 
 	public void setMarker(UMarker marker) {
 		this.marker = marker;
+	}
+
+	@Override
+	public void writeNextLine(UWritingZone zone) throws Exception {
+		if (zone == null || zone.getZoneType() != ZoneContentType.TEXT)
+			return;
+		if (contentStream == null)
+			throw new IllegalStateException(
+					"The contentStream is null, the writer is not in the right state for this operation");
+		
+		writeZone(zone, false);
+		contentStream.newLine();
+
+	}
+
+	@Override
+	public void initMultiLineWriting(UMarker startPosition, float leading) throws Exception {
+		if (startPosition == null || leading < 0)
+			throw new IllegalArgumentException("Invalid arguments leading is negative or startPosition null");
+
+		if (contentStream == null)
+			throw new IllegalStateException(
+					"The contentStrem is null the writer is not in the right state for this operation");
+
+		if (!textEnded) {
+			contentStream.endText();
+		}
+
+		contentStream.beginText();
+		contentStream.newLineAtOffset(startPosition.getX(), startPosition.getY());
+		this.leading = leading;
+
+	}
+
+	@Override
+	public void endMultiLineWriting() throws Exception {
+		if(contentStream != null) {
+			contentStream.endText();
+			textEnded = true;
+		}
 	}
 
 }
