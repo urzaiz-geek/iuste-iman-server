@@ -1,8 +1,6 @@
 package com.urzaizcoding.iusteimanserver.service;
 
-import java.io.InputStream;
-
-public interface StorageService {
+public interface ImageStorageService {
 	/**
 	 * Save the stream of bytes as file described by spec
 	 * @param path : path where the file should be saved
@@ -10,7 +8,9 @@ public interface StorageService {
 	 * @param stream : stream to be saved
 	 * @return the path if the saving operation succeed
 	 */
-	String saveFile(String path,FileSpec spec, InputStream stream) throws Exception;
+	String saveFile(String path,FileSpec spec) throws Exception;
 
 	FileSpec getFile(String archivePath) throws Exception;
+	
+	boolean deleteFile(String path) throws Exception;
 }

@@ -1,7 +1,6 @@
 package com.urzaizcoding.iusteimanserver.domain.registration.student;
 
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -76,6 +75,8 @@ public class Student extends Person {
 	private LanguageLevel englishLevel;
 
 	private String photoPath;
+	
+	private String photoPublicId;
 
 	@OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	private Set<Parent> parents;
@@ -86,22 +87,23 @@ public class Student extends Person {
 	@Builder
 	public Student(Long id, String firstName, String lastName, LocalDate birthDate, Sex sex, String birthPlace,
 			String country, String contact, String email, String registrationId, String regionOfOrigin,
-			String entranceDiploma, String yearOfGraduation, String schoolOfGraduation, String diplomaOption,
-			String countryOfGraduation, LanguageLevel frenchLevel, LanguageLevel englishLevel, String photoPath,
-			Set<Parent> parents) {
+			String entranceDiploma, String yearOfGraduation, String schoolOfGraduation, String quarter,
+			String diplomaOption, String countryOfGraduation, LanguageLevel frenchLevel, LanguageLevel englishLevel,
+			String photoPath, Set<Parent> parents, Folder folder) {
 		super(id, firstName, lastName, birthDate, sex, birthPlace, country, contact, email);
 		this.registrationId = registrationId;
 		this.regionOfOrigin = regionOfOrigin;
 		this.entranceDiploma = entranceDiploma;
 		this.yearOfGraduation = yearOfGraduation;
 		this.schoolOfGraduation = schoolOfGraduation;
+		this.quarter = quarter;
 		this.diplomaOption = diplomaOption;
 		this.countryOfGraduation = countryOfGraduation;
 		this.frenchLevel = frenchLevel;
 		this.englishLevel = englishLevel;
 		this.photoPath = photoPath;
-
-		this.parents = parents == null ? new HashSet<>() : parents;
+		this.parents = parents;
+		this.folder = folder;
 	}
 
 	public void setFolder(Folder folder) {

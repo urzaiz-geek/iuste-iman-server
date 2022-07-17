@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -25,6 +27,7 @@ import com.urzaizcoding.iusteimanserver.service.StudentService;
 @RequestMapping(path = "/students", produces = {MediaType.APPLICATION_JSON_VALUE})
 public class StudentController {
 	
+	Logger logger = LoggerFactory.getLogger(StudentController.class);
 	
 	private final MapStructMapper mapper;
 	
@@ -51,7 +54,7 @@ public class StudentController {
 			consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
 	)
 	public ResponseEntity<StudentDTO> updateStudentPhoto(@NotNull @PathVariable Long studentId, @RequestParam("file") MultipartFile file) throws Exception {
-		
+		logger.info("in update photo");
 		StudentDTO studentResource = mapper.studentToStudentDTO(studentService.updateStudentPhoto(studentId,file));
 		return ResponseEntity.ok(studentResource);
 	}

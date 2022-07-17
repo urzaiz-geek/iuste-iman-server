@@ -119,7 +119,7 @@ public class FolderController {
 	}
 
 	@GetMapping(path = { "{folderRegistrationNumber}/form" }, produces = { MediaType.APPLICATION_PDF_VALUE })
-	public ResponseEntity<byte[]> generatePdfForm(@PathVariable @NotNull @NotBlank String folderRegistrationNumder) {
+	public ResponseEntity<byte[]> generatePdfForm(@PathVariable @NotNull @NotBlank String folderRegistrationNumder) throws Exception {
 
 		FileSpec fileSpec = folderService.generateForm(folderRegistrationNumder);
 		return ResponseEntity.ok()
