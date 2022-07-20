@@ -16,7 +16,7 @@ import lombok.Getter;
 
 @Getter
 public class StudentDTO {
-	
+
 	private final Long id;
 
 	@NotNull
@@ -25,57 +25,61 @@ public class StudentDTO {
 	private final String lastName;
 
 	@NotNull
-	private  final LocalDate birthDate;
-	
+	private final LocalDate birthDate;
+
 	@NotNull
-	private  final Sex sex;
-	
+	private final Sex sex;
+
+	@NotNull
+	private final String birthPlace;
+
+	@NotNull
+	private final String country;
+
+	@NotNull
+	private final String contact;
+
+	@NotNull
+	@Email
+	private final String email;
+
 	@NotNull
 	private String quarter;
+	private final String registrationId;
 
 	@NotNull
-	private  final String birthPlace;
+	private final String regionOfOrigin;
 
 	@NotNull
-	private  final String country;
-
-	@NotNull
-	private  final String contact;
-
-	@NotNull @Email
-	private  final String email;
-
-	private  final String registrationId;
-
-	@NotNull
-	private  final String regionOfOrigin;
-
-	@NotNull
-	private  final String entranceDiploma;
+	private final String entranceDiploma;
 
 	@NotNull
 	@Size(max = 4)
-	private  final String yearOfGraduation;
+	private final String yearOfGraduation;
 
 	@NotNull
-	private  final String schoolOfGraduation;
-	
-	private  final String diplomaOption;
+	private final String schoolOfGraduation;
+
+	private final String diplomaOption;
 
 	@NotNull
-	private  final String countryOfGraduation;
+	private final String countryOfGraduation;
 
-	@Valid @NotNull
-	private  final LanguageLevel frenchLevel;
+	@Valid
+	@NotNull
+	private final LanguageLevel frenchLevel;
 
-	@Valid @NotNull
-	private  final LanguageLevel englishLevel;
+	@Valid
+	@NotNull
+	private final LanguageLevel englishLevel;
 
-	private  final String photoPath;
-	
+	private final String photoPath;
+
 	private String folderRegistrationNumber;
 
-	private  final Set<ParentDTO> parents;
+	private final Set<ParentDTO> parents;
+	
+	private final Long account;
 
 	@Builder
 	private StudentDTO(Long id, @NotNull String firstName, String lastName, @NotNull LocalDate birthDate,
@@ -85,7 +89,7 @@ public class StudentDTO {
 			@NotNull @Size(max = 4) String yearOfGraduation, @NotNull String schoolOfGraduation, String diplomaOption,
 			@NotNull String countryOfGraduation, @Valid @NotNull LanguageLevel frenchLevel,
 			@Valid @NotNull LanguageLevel englishLevel, String photoPath, String folderRegistrationNumber,
-			Set<ParentDTO> parents) {
+			Set<ParentDTO> parents, Long account) {
 		super();
 		this.id = id;
 		this.firstName = firstName;
@@ -109,9 +113,7 @@ public class StudentDTO {
 		this.photoPath = photoPath;
 		this.folderRegistrationNumber = folderRegistrationNumber;
 		this.parents = parents;
+		this.account = account;
 	}
-	
-	
-	
 
 }

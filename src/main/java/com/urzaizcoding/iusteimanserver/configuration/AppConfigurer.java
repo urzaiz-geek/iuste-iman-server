@@ -4,6 +4,7 @@ import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
@@ -14,6 +15,9 @@ import com.cloudinary.Cloudinary;
 public class AppConfigurer {
 	
 	private final CloudinaryConfig cloudinaryConfig;
+	
+	@Value("apisecretkey")
+	private String apiSecret;
 	
 	
 	public AppConfigurer(CloudinaryConfig cloudinaryConfig) {
@@ -31,6 +35,10 @@ public class AppConfigurer {
 	
 	public static ZoneId appTimeZoneId() {
 		return ZoneId.of("UTC");
+	}
+	
+	public String getSecretKey() {
+		return apiSecret;
 	}
 	
 	@Bean

@@ -33,6 +33,7 @@ cloudinary:
    apikey: ${CLOUDINARY_API_KEY}
    apisecret: ${CLOUDINARY_API_SECRET}
 ---
+apisecretkey: ${API_SECRET}
 
 logging:
    level:

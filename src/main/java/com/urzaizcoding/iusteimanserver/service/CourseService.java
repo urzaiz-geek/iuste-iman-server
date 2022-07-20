@@ -19,9 +19,9 @@ public interface CourseService {
 
 	void deleteCourse(Long id) throws ResourceNotFoundException;
 
-	Student subscribeStudent(Student studentEntity, Long courseId) throws ResourceNotFoundException, MailNotificationFailureException;
+	Student subscribeStudent(Student studentEntity, Long courseId) throws ResourceNotFoundException, MailNotificationFailureException, Exception;
 
-	Student updateSubscription(Student studentEntity, Long courseId) throws ResourceNotFoundException, MailNotificationFailureException;
+	Student updateSubscription(Student studentEntity, Long courseId) throws ResourceNotFoundException, MailNotificationFailureException, Exception;
 
 	Page<Folder> getFoldersOfCourse(@NotNull @NotBlank Long courseId, Integer page, Integer size) throws ResourceNotFoundException;
 

@@ -12,6 +12,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
@@ -47,16 +49,20 @@ public class Notification {
 	private Boolean read;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonIgnore
 	private Account account;
 
 	@Builder
-	public Notification(Long id, String subject, String content, LocalDate issuedDate, Boolean read) {
+	public Notification(Long id, String subject, String content, LocalDate issuedDate, Boolean read, Account account) {
 		super();
 		this.id = id;
 		this.subject = subject;
 		this.content = content;
 		this.issuedDate = issuedDate;
 		this.read = read;
+		this.account = account;
 	}
+
+	
 	
 }

@@ -5,11 +5,11 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import javax.transaction.Transactional;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.urzaizcoding.iusteimanserver.configuration.AppConfigurer;
@@ -31,14 +31,16 @@ public class FolderServiceImpl implements FolderService {
 	private final MailNotificationService mailNotificationService;
 	private final ImageStorageService storageService;
 	private final PDFGeneratorService pdfGeneratorService;
+	private final AccountService accountService;
 
 	public FolderServiceImpl(FolderRepository folderRepository, MailNotificationService mailNotificationService,
-			ImageStorageService storageService, PDFGeneratorService pdfGeneratorService) {
+			ImageStorageService storageService, PDFGeneratorService pdfGeneratorService, AccountService accountService) {
 		super();
 		this.folderRepository = folderRepository;
 		this.mailNotificationService = mailNotificationService;
 		this.storageService = storageService;
 		this.pdfGeneratorService = pdfGeneratorService;
+		this.accountService = accountService;
 	}
 
 	@Override
@@ -65,15 +67,22 @@ public class FolderServiceImpl implements FolderService {
 
 		// create user account
 
-		Account account = Account.builder().build();
-
+		
 		Student student = folderEntity.getStudent();
+		
+		Account account = Account.builder()
+				.username(student.getEmail())
+				.password(AccountService.randPassword(10))
+				.build();
 
+		accountService.saveAccount(account, null); //we have to save it ourself to encrypt password
 		student.setAccount(account);
 
 		// create student registration number
 
 		student.setRegistrationId(Student.generateStudentRegistrationId());
+		
+		
 
 		// send email to user to tel him that he has been accepted
 

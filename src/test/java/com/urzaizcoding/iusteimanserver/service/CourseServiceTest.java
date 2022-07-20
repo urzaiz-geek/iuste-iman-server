@@ -43,11 +43,14 @@ class CourseServiceTest {
 	@Mock
 	private MailNotificationService mailNotificationService;
 	
+	@Mock
+	private AccountService accountService;
+	
 	private CourseService underTest;
 	
 	@BeforeEach
 	void setup() throws Exception {
-		underTest = new CourseServiceImpl(courseRepository, studentRepository, mailNotificationService);
+		underTest = new CourseServiceImpl(courseRepository, studentRepository, mailNotificationService, accountService);
 	}
 	
 	@Test

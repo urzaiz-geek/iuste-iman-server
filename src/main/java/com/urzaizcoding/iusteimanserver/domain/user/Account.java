@@ -1,6 +1,7 @@
 package com.urzaizcoding.iusteimanserver.domain.user;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -34,6 +35,9 @@ import lombok.ToString;
 @EqualsAndHashCode
 public class Account implements Serializable {
 	
+	public static final Long PASSWORD_VALIDITY = 60L; //in days
+	public static final Long FIRST_PASSWORD_RESET_PERIOD = 10L; //in minits 
+	
 	@Getter(value = AccessLevel.NONE)
 	private static final long serialVersionUID = -6440248033893720606L;
 
@@ -49,6 +53,21 @@ public class Account implements Serializable {
 	@Column(name = "account_id")
 	private Long id;
 	
+	@Column(unique = true, length = 25, nullable = false)
+	private String username;
+	
+	@Column(nullable = false)
+	private String password;
+	
+	@Column(columnDefinition = "TIMESTAMP")
+	private LocalDateTime creationDate;
+	
+	@Column(columnDefinition = "TIMESTAMP")
+	private LocalDateTime lastConnectionDate;
+	
+	private boolean active;
+	
+	@Column(length = 1)
 	private Role role;
 	
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -59,11 +78,20 @@ public class Account implements Serializable {
 	private Set<Notification> notifications; 
 
 	@Builder
-	public Account(Long id, Account creator) {
+	public Account(Long id, String username, String password, LocalDateTime creationDate, LocalDateTime lastConnexionDate,
+			boolean active, Role role, Account creator, Set<Notification> notifications) {
 		super();
 		this.id = id;
+		this.username = username;
+		this.password = password;
+		this.creationDate = creationDate;
+		this.lastConnectionDate = lastConnexionDate;
+		this.active = active;
+		this.role = role;
 		this.creator = creator;
+		this.notifications = notifications;
 	}
+	
 	
 	public void addNotification(Notification notification) {
 		this.notifications.add(notification);
@@ -74,4 +102,6 @@ public class Account implements Serializable {
 		this.notifications.remove(notification);
 		notification.setAccount(null);
 	}
+
+	
 }
