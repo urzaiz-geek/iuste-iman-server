@@ -20,21 +20,22 @@ public class IusteimanServerApplication {
 		SpringApplication.run(IusteimanServerApplication.class, args);
 	}
 
-//	@Bean
+	@Bean
 	CommandLineRunner runner() {
 		return (String... args) -> {
 			// add admin to database
+			if(args[args.length - 1].equals("init-test")) {
+				Account admin = Account.builder().username("root").role(Role.ADMINISTRATOR).password("123").active(true)
+						.build();
 
-			Account admin = Account.builder().username("root").role(Role.ADMINISTRATOR).password("123").active(true)
-					.build();
+				Account manager = Account.builder().username("ndo").password("456").role(Role.MANAGER).active(true).build();
 
-			Account manager = Account.builder().username("ndo").password("456").role(Role.MANAGER).active(true).build();
+				Account student = Account.builder().username("sake").password("789").role(Role.STUDENT).active(true).build();
 
-			Account student = Account.builder().username("sake").password("789").role(Role.STUDENT).active(true).build();
-
-			admin = accountService.saveAccount(admin, null);
-			accountService.saveAccount(manager, null);
-			accountService.saveAccount(student, null);
+				admin = accountService.saveAccount(admin, null);
+				accountService.saveAccount(manager, null);
+				accountService.saveAccount(student, null);
+			}
 		};
 	}
 
