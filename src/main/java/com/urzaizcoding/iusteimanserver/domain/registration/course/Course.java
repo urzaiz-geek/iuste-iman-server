@@ -5,10 +5,12 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -19,6 +21,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import com.urzaizcoding.iusteimanserver.configuration.AppConfigurer;
+import com.urzaizcoding.iusteimanserver.domain.Converters;
 import com.urzaizcoding.iusteimanserver.domain.registration.Folder;
 import com.urzaizcoding.iusteimanserver.domain.registration.Form;
 import com.urzaizcoding.iusteimanserver.domain.registration.Quitus;
@@ -67,6 +70,9 @@ public class Course implements Serializable {
 	private Integer level;
 
 	private Boolean open = true;
+	
+	@Convert(converter = Converters.ListToCSVStringConverter.class)
+	private List<String> authorizedDiplomas;
 
 	@OneToMany(mappedBy = "course", cascade = { CascadeType.ALL }, orphanRemoval = true, fetch = FetchType.LAZY)
 	private Set<Folder> folders;
@@ -75,8 +81,8 @@ public class Course implements Serializable {
 	private Set<Fees> fees;
 
 	@Builder
-	public Course(Long id, String faculty, String cycle, String speciality, String year, Integer level, Set<Fees> fees,
-			Set<Folder> folders) {
+	public Course(Long id, String faculty, String cycle, String speciality, String year, Integer level, Boolean open,
+			List<String> authorizedDiplomas, Set<Folder> folders, Set<Fees> fees) {
 		super();
 		this.id = id;
 		this.faculty = faculty;
@@ -84,11 +90,12 @@ public class Course implements Serializable {
 		this.speciality = speciality;
 		this.year = year;
 		this.level = level;
+		this.open = open;
+		this.authorizedDiplomas = authorizedDiplomas;
 		this.folders = folders;
-
-		this.fees = fees == null ? new HashSet<>() : fees;
-		this.folders = new HashSet<>();
+		this.fees = fees;
 	}
+
 
 	public Course() {
 		this.fees = new HashSet<>();
@@ -160,4 +167,5 @@ public class Course implements Serializable {
 		this.fees.stream().forEach(f -> f.setCourse(this));
 	}
 
+	
 }

@@ -7,13 +7,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 
+import com.urzaizcoding.iusteimanserver.IusteImanApplicationTestContext;
+import com.urzaizcoding.iusteimanserver.IusteimanServerApplication;
 import com.urzaizcoding.iusteimanserver.domain.Sex;
 import com.urzaizcoding.iusteimanserver.domain.registration.Folder;
 import com.urzaizcoding.iusteimanserver.domain.registration.student.Student;
 
-@SpringBootTest(webEnvironment = WebEnvironment.NONE)
+//@SpringBootTest(webEnvironment = WebEnvironment.NONE,classes = {IusteImanApplicationTestContext.class})
+@SpringBootTest(classes = {IusteimanServerApplication.class})
+@ActiveProfiles("test")
 class MailSenderServiceImplIT {
 
 	

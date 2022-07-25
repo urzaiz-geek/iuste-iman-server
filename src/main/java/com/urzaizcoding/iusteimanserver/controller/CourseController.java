@@ -55,7 +55,7 @@ public class CourseController {
 	}
 
 	@GetMapping(path = "{id}")
-	public ResponseEntity<CourseDTO> getSpecifiedCourse(Long id) throws Exception {
+	public ResponseEntity<CourseDTO> getSpecifiedCourse(@PathVariable @NotNull Long id) throws Exception {
 		Course courseEntity = courseService.findSpecifiedCourse(id);
 		return ResponseEntity.ok(mapper.courseToCourseDTO(courseEntity));
 	}
@@ -65,6 +65,9 @@ public class CourseController {
 			UriComponentsBuilder uriComponentsBuilder) throws Exception {
 
 		Course courseEntity = mapper.courseDTOToCourse(courseResource);
+		
+		System.out.println(courseEntity);
+		System.out.println(courseResource);
 		courseEntity.setId(null);
 		courseEntity = courseService.saveCourse(courseEntity);
 

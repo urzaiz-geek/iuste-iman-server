@@ -47,7 +47,7 @@ class ParentRepositoryTest {
 		father.setRegionOfOrigin("Ouest");
 		Student studentEntity = Student.builder().firstName("Tresor").lastName("Urzaiz")
 				.birthDate(LocalDate.of(1997, 11, 13)).birthPlace("Bafoussam").contact("690872959").country("Cameroun")
-				.countryOfGraduation("Cameroun").entranceDiploma("Licence").diplomaOption("GL")
+				.countryOfGraduation("Cameroun").entranceDiploma("Licence")
 				.email("naruffygolen@gmail.com")
 				.englishLevel(LanguageLevel.builder().readLevel(Level.GOOD).writeLevel(Level.GOOD)
 						.comprehensionLevel(Level.GOOD).speakLevel(Level.GOOD).build())

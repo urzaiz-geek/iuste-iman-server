@@ -1,4 +1,4 @@
-package com.urzaizcoding.iusteimanserver.utils;
+package com.urzaizcoding.iusteimanserver.utils.pdf;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
@@ -427,7 +427,7 @@ public class UFormWriter extends FormDocumentWriter {
 		writeWhereComplement(student.getSchoolOfGraduation());
 		writeFacultyDetails(course.getFaculty(), course.getSpeciality(), course.getLevel().toString(),
 				course.getCycle());
-		writeDiploma(String.format("%s %s", student.getEntranceDiploma(), student.getDiplomaOption()));
+		writeDiploma(student.getEntranceDiploma());
 		endPDF();
 
 		return output.toByteArray();

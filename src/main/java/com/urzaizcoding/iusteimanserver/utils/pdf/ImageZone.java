@@ -1,4 +1,4 @@
-package com.urzaizcoding.iusteimanserver.utils;
+package com.urzaizcoding.iusteimanserver.utils.pdf;
 
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 

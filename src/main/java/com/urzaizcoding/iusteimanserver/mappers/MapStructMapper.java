@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 
+import javax.validation.Valid;
+
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
@@ -13,14 +15,22 @@ import com.urzaizcoding.iusteimanserver.domain.registration.Folder;
 import com.urzaizcoding.iusteimanserver.domain.registration.Part;
 import com.urzaizcoding.iusteimanserver.domain.registration.course.Course;
 import com.urzaizcoding.iusteimanserver.domain.registration.course.Fees;
+import com.urzaizcoding.iusteimanserver.domain.registration.manager.Manager;
 import com.urzaizcoding.iusteimanserver.domain.registration.student.Parent;
 import com.urzaizcoding.iusteimanserver.domain.registration.student.Student;
+import com.urzaizcoding.iusteimanserver.domain.user.Account;
+import com.urzaizcoding.iusteimanserver.domain.user.Notification;
+import com.urzaizcoding.iusteimanserver.dto.AccountDTO;
+import com.urzaizcoding.iusteimanserver.dto.AccountDTOElevation;
+import com.urzaizcoding.iusteimanserver.dto.AccountDTOIn;
 import com.urzaizcoding.iusteimanserver.dto.CourseDTO;
 import com.urzaizcoding.iusteimanserver.dto.CourseDTOLight;
 import com.urzaizcoding.iusteimanserver.dto.FeesDTO;
 import com.urzaizcoding.iusteimanserver.dto.FolderDTO;
 import com.urzaizcoding.iusteimanserver.dto.FolderDTOEmbedded;
 import com.urzaizcoding.iusteimanserver.dto.FolderDTOLight;
+import com.urzaizcoding.iusteimanserver.dto.ManagerDTO;
+import com.urzaizcoding.iusteimanserver.dto.NotificationDTO;
 import com.urzaizcoding.iusteimanserver.dto.ParentDTO;
 import com.urzaizcoding.iusteimanserver.dto.PartDTO;
 import com.urzaizcoding.iusteimanserver.dto.StudentDTO;
@@ -38,12 +48,29 @@ public interface MapStructMapper {
 	StudentDTOLight studentToStudentDTOLigth(Student student);
 
 	ParentDTO parentToParentDTO(Parent parent);
+	
+	@Mappings({@Mapping(target="account",source="manager.account.id")})
+	ManagerDTO managerToManagerDTO(Manager manager);
+	
+	@Mapping(target = "account",ignore = true)
+	Manager managerDTOToManager(ManagerDTO managerResource);
 
+	Account accountDTOToAccount(AccountDTO accountResource);
+
+	@Mappings({ @Mapping(target = "creationDate", source = "account.creationDate", qualifiedBy = { UTCTimeMapper.class }),
+			@Mapping(target = "lastConnectionDate", source = "account.lastConnectionDate", qualifiedBy = { UTCTimeMapper.class }) })
+	AccountDTO accountToAccountDTO(Account account);
+
+	Account accountDTOInToAccount(AccountDTOIn accountResource);
+	
+	Account accountDTOElevationToAccount(@Valid AccountDTOElevation elevationResource);
+	
+	NotificationDTO notificationToNotificationDTO(Notification notification);
+	
 	Parent parentDTOToParent(ParentDTO parentResource);
 
-	@Mappings({@Mapping(target = "id", source = "student.id"),
-			@Mapping(target = "folderRegistrationNumber", source = "folder.folderRegistrationNumber")}
-			)
+	@Mappings({ @Mapping(target = "id", source = "student.id"),
+		 @Mapping(target="account",source="student.account.id")})
 	StudentDTO studentToStudentDTO(Student student);
 
 	Student studentDTOToStudent(StudentDTO studentResource);
@@ -53,7 +80,7 @@ public interface MapStructMapper {
 
 	@Mappings(@Mapping(target = "creationDate", source = "folder.creationDate", qualifiedBy = { UTCTimeMapper.class }))
 	FolderDTOLight folderToFolderDTOLight(Folder folder);
-	
+
 	FolderDTOEmbedded folderToFolderDTOEmbedded(Folder folder);
 
 	@Mappings({ @Mapping(target = "folderId", source = "folder.id"),
@@ -67,7 +94,15 @@ public interface MapStructMapper {
 	@UTCTimeMapper
 	default String toUtCString(LocalDateTime dateTime) {
 
-		return dateTime.atOffset(ZoneOffset.UTC).format(DateTimeFormatter.ISO_DATE_TIME);
+		if(dateTime != null) {
+			return dateTime.atOffset(ZoneOffset.UTC).format(DateTimeFormatter.ISO_DATE_TIME);
+		}
+		
+		return null;
 
 	}
+
+	
+	
+	
 }

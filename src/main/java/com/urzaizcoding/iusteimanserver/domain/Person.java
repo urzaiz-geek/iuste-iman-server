@@ -67,7 +67,7 @@ public abstract class Person implements Serializable {
 	@Column(nullable = false, length = 90)
 	protected String email;
 	
-	@OneToOne(fetch = FetchType.LAZY,cascade = {CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH})
+	@OneToOne(fetch = FetchType.LAZY,cascade = {CascadeType.ALL})
 	protected Account account;
 
 	protected Person(Long id, String firstName, String lastName, LocalDate birthDate, Sex sex, String birthPlace,

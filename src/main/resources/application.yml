@@ -33,6 +33,8 @@ cloudinary:
    apikey: ${CLOUDINARY_API_KEY}
    apisecret: ${CLOUDINARY_API_SECRET}
 ---
+apisecretkey: ${API_SECRET}
+jwtissuer: iusteimanserverapplication
 
 logging:
    level:

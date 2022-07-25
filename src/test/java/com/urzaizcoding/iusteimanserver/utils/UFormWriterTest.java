@@ -16,6 +16,7 @@ import com.urzaizcoding.iusteimanserver.domain.registration.student.Level;
 import com.urzaizcoding.iusteimanserver.domain.registration.student.Parent;
 import com.urzaizcoding.iusteimanserver.domain.registration.student.ParentAttribute;
 import com.urzaizcoding.iusteimanserver.domain.registration.student.Student;
+import com.urzaizcoding.iusteimanserver.utils.pdf.UFormWriter;
 
 class UFormWriterTest {
 
@@ -29,7 +30,7 @@ class UFormWriterTest {
 				.lastName("TRESOR ADIANIE VENCESLAS HOUHA").sex(Sex.MALE).country("CAMEROUNAISE")
 				.birthDate(LocalDate.of(1998, 11, 13)).birthPlace("HOPITAL DE MAIRIE RURALE VERS KOTO")
 				.quarter("BEPANDA CARREFOUR TENDON").email("naruffygolen@gmail.com").contact("690872959")
-				.entranceDiploma("Baccalauréat ESG").diplomaOption("C")
+				.entranceDiploma("Baccalauréat ESG C")
 				.schoolOfGraduation("Institut supérieur des Sciences, des Technologies et de l'Ethique")
 				.frenchLevel(LanguageLevel.builder().writeLevel(Level.GOOD).readLevel(Level.MEDIUM)
 						.speakLevel(Level.NOT_AT_ALL).comprehensionLevel(Level.LITTLE).build())

@@ -5,9 +5,9 @@ import org.springframework.stereotype.Service;
 import com.urzaizcoding.iusteimanserver.domain.registration.Folder;
 import com.urzaizcoding.iusteimanserver.domain.registration.Quitus;
 import com.urzaizcoding.iusteimanserver.exception.ResourceNotFoundException;
-import com.urzaizcoding.iusteimanserver.utils.DocumentWriter;
-import com.urzaizcoding.iusteimanserver.utils.UFormWriter;
-import com.urzaizcoding.iusteimanserver.utils.UQuitusWriter;
+import com.urzaizcoding.iusteimanserver.utils.pdf.DocumentWriter;
+import com.urzaizcoding.iusteimanserver.utils.pdf.UFormWriter;
+import com.urzaizcoding.iusteimanserver.utils.pdf.UQuitusWriter;
 
 @Service
 public class PDFGeneratorServiceImpl implements PDFGeneratorService {
