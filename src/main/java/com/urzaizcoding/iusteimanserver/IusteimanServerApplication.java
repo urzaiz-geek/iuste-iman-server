@@ -24,7 +24,7 @@ public class IusteimanServerApplication {
 	CommandLineRunner runner() {
 		return (String... args) -> {
 			// add admin to database
-			if(args[args.length - 1].equals("init-test")) {
+			try {
 				Account admin = Account.builder().username("root").role(Role.ADMINISTRATOR).password("123").active(true)
 						.build();
 
@@ -35,6 +35,8 @@ public class IusteimanServerApplication {
 				admin = accountService.saveAccount(admin, null);
 				accountService.saveAccount(manager, null);
 				accountService.saveAccount(student, null);
+			}catch(Exception e) {
+				
 			}
 		};
 	}
