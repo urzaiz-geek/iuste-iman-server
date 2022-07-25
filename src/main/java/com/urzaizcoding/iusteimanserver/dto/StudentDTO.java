@@ -60,8 +60,6 @@ public class StudentDTO {
 	@NotNull
 	private final String schoolOfGraduation;
 
-	private final String diplomaOption;
-
 	@NotNull
 	private final String countryOfGraduation;
 
@@ -75,8 +73,6 @@ public class StudentDTO {
 
 	private final String photoPath;
 
-	private String folderRegistrationNumber;
-
 	private final Set<ParentDTO> parents;
 	
 	private final Long account;
@@ -86,9 +82,9 @@ public class StudentDTO {
 			@NotNull Sex sex, @NotNull String quarter, @NotNull String birthPlace, @NotNull String country,
 			@NotNull String contact, @NotNull @Email String email, String registrationId,
 			@NotNull String regionOfOrigin, @NotNull String entranceDiploma,
-			@NotNull @Size(max = 4) String yearOfGraduation, @NotNull String schoolOfGraduation, String diplomaOption,
+			@NotNull @Size(max = 4) String yearOfGraduation, @NotNull String schoolOfGraduation,
 			@NotNull String countryOfGraduation, @Valid @NotNull LanguageLevel frenchLevel,
-			@Valid @NotNull LanguageLevel englishLevel, String photoPath, String folderRegistrationNumber,
+			@Valid @NotNull LanguageLevel englishLevel, String photoPath,
 			Set<ParentDTO> parents, Long account) {
 		super();
 		this.id = id;
@@ -106,12 +102,10 @@ public class StudentDTO {
 		this.entranceDiploma = entranceDiploma;
 		this.yearOfGraduation = yearOfGraduation;
 		this.schoolOfGraduation = schoolOfGraduation;
-		this.diplomaOption = diplomaOption;
 		this.countryOfGraduation = countryOfGraduation;
 		this.frenchLevel = frenchLevel;
 		this.englishLevel = englishLevel;
 		this.photoPath = photoPath;
-		this.folderRegistrationNumber = folderRegistrationNumber;
 		this.parents = parents;
 		this.account = account;
 	}

@@ -65,6 +65,9 @@ public class CourseController {
 			UriComponentsBuilder uriComponentsBuilder) throws Exception {
 
 		Course courseEntity = mapper.courseDTOToCourse(courseResource);
+		
+		System.out.println(courseEntity);
+		System.out.println(courseResource);
 		courseEntity.setId(null);
 		courseEntity = courseService.saveCourse(courseEntity);
 

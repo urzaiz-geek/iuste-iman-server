@@ -128,7 +128,7 @@
                                 <tr>
                                   <td style="padding-right: 0px;padding-left: 0px;" align="center">
 
-                                    <img align="center" border="0" src="https://res.cloudinary.com/dxo1usgj0/image/upload/v1658391271/cdn/logo_IUSTE_afnd1w.png" alt="Image" title="Image" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: inline-block !important;border: none;height: auto;float: none;width: 32%;max-width: 179.2px;"
+                                    <img align="center" border="0" src="https://assets.unlayer.com/projects/91126/1658358392030-logo_IUSTE.jpg" alt="Image" title="Image" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: inline-block !important;border: none;height: auto;float: none;width: 32%;max-width: 179.2px;"
                                       width="179.2" />
 
                                   </td>
@@ -174,7 +174,7 @@
                                 <tr>
                                   <td style="padding-right: 0px;padding-left: 0px;" align="center">
 
-                                    <img align="center" border="0" src="https://res.cloudinary.com/dxo1usgj0/image/upload/v1658391184/cdn/1597218650916-xxxxc_ahhv9j.png" alt="Image" title="Image" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: inline-block !important;border: none;height: auto;float: none;width: 26%;max-width: 150.8px;"
+                                    <img align="center" border="0" src="https://cdn.templates.unlayer.com/assets/1597218650916-xxxxc.png" alt="Image" title="Image" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: inline-block !important;border: none;height: auto;float: none;width: 26%;max-width: 150.8px;"
                                       width="150.8" />
 
                                   </td>
@@ -192,7 +192,7 @@
                             <td style="overflow-wrap:break-word;word-break:break-word;padding:10px;font-family:'Cabin',sans-serif;" align="left">
 
                               <div style="color: #e5eaf5; line-height: 140%; text-align: center; word-wrap: break-word;">
-                                <p style="font-size: 14px; line-height: 140%;"><strong>MERCI POUR VOTRE INSCRIPTION<br /></strong></p>
+                                <p style="font-size: 14px; line-height: 140%;"><strong>CONFIRMEZ VOTRE IDENTITE<br /></strong></p>
                               </div>
 
                             </td>
@@ -206,7 +206,7 @@
                             <td style="overflow-wrap:break-word;word-break:break-word;padding:0px 10px 31px;font-family:'Cabin',sans-serif;" align="left">
 
                               <div style="color: #e5eaf5; line-height: 140%; text-align: center; word-wrap: break-word;">
-                                <p style="font-size: 14px; line-height: 140%;"><span style="font-size: 28px; line-height: 39.2px;"><strong><span style="line-height: 39.2px; font-size: 28px;">Candidature reçue<br /></span></strong>
+                                <p style="font-size: 14px; line-height: 140%;"><span style="font-size: 28px; line-height: 39.2px;"><strong><span style="line-height: 39.2px; font-size: 28px;">VERIFICATION<br /></span></strong>
                                   </span>
                                 </p>
                               </div>
@@ -248,22 +248,12 @@
 
                               <div style="line-height: 160%; text-align: center; word-wrap: break-word;">
                                 <p style="font-size: 14px; line-height: 160%;"><span style="font-size: 22px; line-height: 35.2px;">Bonjour ${prefix} ${student}, </span></p>
-                                <p style="font-size: 14px; line-height: 160%; text-align: justify;"><span style="font-size: 18px; line-height: 28.8px;">votre canditature a bien été reçue, veuillez vous rendre sur le site de l'établissement muni des pièces physiques pour compléter votre inscription avant la date de fermeture des inscriptions.<br /></span></p>
-                                <p style="font-size: 14px; line-height: 160%; text-align: justify;"><span style="font-size: 18px; line-height: 28.8px;">Votre numéro de dossier est le :</span></p>
-                              </div>
-
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-
-                      <table style="font-family:'Cabin',sans-serif;" role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
-                        <tbody>
-                          <tr>
-                            <td style="overflow-wrap:break-word;word-break:break-word;padding:33px 55px 60px;font-family:'Cabin',sans-serif;" align="left">
-
-                              <div style="line-height: 160%; text-align: center; word-wrap: break-word;">
-                                <p style="font-size: 14px; line-height: 160%;"><span style="font-size: 28px; line-height: 44.8px; color: #1c13c6;">${folderRegistrationNumber}</span></p>
+                                <p style="font-size: 14px; line-height: 160%; text-align: justify;"><span style="font-size: 18px; line-height: 28.8px;">pour poursuivre votre opération de mise à jour de votre compte veuillez entrer le mot de passe à usage unique suivant :<br /></span></p>
+                                <p style="font-size: 14px; line-height: 160%; text-align: justify;"> </p>
+                                <p style="font-size: 14px; line-height: 160%; text-align: center;"><span style="font-size: 20px; line-height: 32px; color: #3645f4;"><strong>OTP : ${password}</strong></span></p>
+                                <p style="font-size: 14px; line-height: 160%; text-align: left;"> </p>
+                                <p style="font-size: 14px; line-height: 160%; text-align: left;"><span style="color: #e20909; line-height: 22.4px; font-size: 14px;"><span style="line-height: 22.4px; font-size: 14px;">Ce code est à usage unique et expire dans 5 minutes</span></span>
+                                </p>
                               </div>
 
                             </td>
@@ -278,7 +268,7 @@
 
                               <div style="line-height: 160%; text-align: center; word-wrap: break-word;">
                                 <p style="font-size: 14px; line-height: 160%;">L'équipe de IUSTE</p>
-                                <p style="font-size: 14px; line-height: 160%;">vous remercie</p>
+                                <p style="font-size: 14px; line-height: 160%;">vous remercie.</p>
                               </div>
 
                             </td>

@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.data.domain.Page;
@@ -21,6 +22,8 @@ import com.urzaizcoding.iusteimanserver.configuration.security.Token;
 import com.urzaizcoding.iusteimanserver.domain.Person;
 import com.urzaizcoding.iusteimanserver.domain.user.Account;
 import com.urzaizcoding.iusteimanserver.domain.user.Notification;
+import com.urzaizcoding.iusteimanserver.domain.user.Role;
+import com.urzaizcoding.iusteimanserver.exception.ElevationException;
 import com.urzaizcoding.iusteimanserver.exception.ResourceNotFoundException;
 import com.urzaizcoding.iusteimanserver.mappers.NotificationRepository;
 import com.urzaizcoding.iusteimanserver.repository.AccountRepository;
@@ -34,16 +37,20 @@ public class AccountServiceImpl implements AccountService {
 	private final PasswordEncoder passwordEncoder;
 	private final NotificationRepository notificationRepository;
 	private final AppConfigurer appConfigurer;
+	private final OTPValidationService otpValidationService;
+	private final MailNotificationService mailNotificationService;
 
 	public AccountServiceImpl(AccountRepository accountRepository, EffectivePersonRepository effectivePersonRepository,
 			PasswordEncoder passwordEncoder, NotificationRepository notificationRepository,
-			AppConfigurer appConfigurer) {
+			AppConfigurer appConfigurer, OTPValidationService otpValidationService, MailNotificationService mailNotificationService) {
 		super();
 		this.accountRepository = accountRepository;
 		this.effectivePersonRepository = effectivePersonRepository;
 		this.passwordEncoder = passwordEncoder;
 		this.notificationRepository = notificationRepository;
 		this.appConfigurer = appConfigurer;
+		this.otpValidationService = otpValidationService;
+		this.mailNotificationService = mailNotificationService;
 	}
 
 	@Override
@@ -144,7 +151,7 @@ public class AccountServiceImpl implements AccountService {
 				UserDetails user = new AppUserDetails(accountRepository.findAccountByUsername(username)
 						.orElseThrow(() -> new SecurityException("Unexpected security exception ")));
 				
-				String accessToken = provider.createAccessToken(user, request.getRequestURL().toString());
+				String accessToken = provider.createAccessToken(user);
 				
 				return new Token(refreshToken,accessToken);
 			}
@@ -152,6 +159,44 @@ public class AccountServiceImpl implements AccountService {
 		}
 
 		return null;
+	}
+
+	@Override
+	@Transactional
+	public Token elevateAccount(@NotNull Long id, Account accountInfos, String otp) throws ElevationException {
+		if(otpValidationService.authenticateOTP(otp, id)) {
+			//Update Account
+			Account userAccount = accountRepository.findById(id).orElseThrow(() -> new ElevationException());
+			
+			userAccount.setUsername(accountInfos.getUsername());
+			userAccount.setPassword(passwordEncoder.encode(accountInfos.getPassword()));
+			userAccount.setRole(Role.STUDENT);
+			
+			JWTAuthenticationProvider provider = JWTAuthenticationProvider.getProvider(appConfigurer);
+			
+			UserDetails user = new AppUserDetails(userAccount);
+			
+			String accessToken = provider.createAccessToken(user);
+			
+			String refreshToken = provider.createRefreshToken(user.getUsername());
+			
+			return new Token(refreshToken,accessToken);
+			
+		}else {
+			throw new ElevationException("Failed to validate the otp");
+		}
+	}
+
+	@Override
+	public void attemptElevation(@NotBlank Long id) throws Exception {
+		Account account = accountRepository.findById(id).orElseThrow(() -> new ElevationException("Account not found"));
+		
+		String otp = otpValidationService.generateOTP(5, id);
+		
+		Person owner = account.getOwner();
+		
+		mailNotificationService.sendOtpEmail(otp, owner);
+		
 	}
 
 }

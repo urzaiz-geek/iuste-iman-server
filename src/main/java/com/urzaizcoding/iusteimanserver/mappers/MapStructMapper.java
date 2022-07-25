@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 
+import javax.validation.Valid;
+
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
@@ -19,6 +21,7 @@ import com.urzaizcoding.iusteimanserver.domain.registration.student.Student;
 import com.urzaizcoding.iusteimanserver.domain.user.Account;
 import com.urzaizcoding.iusteimanserver.domain.user.Notification;
 import com.urzaizcoding.iusteimanserver.dto.AccountDTO;
+import com.urzaizcoding.iusteimanserver.dto.AccountDTOElevation;
 import com.urzaizcoding.iusteimanserver.dto.AccountDTOIn;
 import com.urzaizcoding.iusteimanserver.dto.CourseDTO;
 import com.urzaizcoding.iusteimanserver.dto.CourseDTOLight;
@@ -60,12 +63,14 @@ public interface MapStructMapper {
 
 	Account accountDTOInToAccount(AccountDTOIn accountResource);
 	
+	Account accountDTOElevationToAccount(@Valid AccountDTOElevation elevationResource);
+	
 	NotificationDTO notificationToNotificationDTO(Notification notification);
 	
 	Parent parentDTOToParent(ParentDTO parentResource);
 
 	@Mappings({ @Mapping(target = "id", source = "student.id"),
-			@Mapping(target = "folderRegistrationNumber", source = "folder.folderRegistrationNumber") ,@Mapping(target="account",source="student.account.id")})
+		 @Mapping(target="account",source="student.account.id")})
 	StudentDTO studentToStudentDTO(Student student);
 
 	Student studentDTOToStudent(StudentDTO studentResource);
@@ -96,6 +101,8 @@ public interface MapStructMapper {
 		return null;
 
 	}
+
+	
 	
 	
 }

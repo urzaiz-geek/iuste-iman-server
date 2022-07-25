@@ -62,9 +62,6 @@ public class Student extends Person {
 	@Column(length = 80)
 	private String quarter;
 
-	@Column(nullable = false, length = 50)
-	private String diplomaOption;
-
 	@Column(nullable = false, length = 80)
 	private String countryOfGraduation;
 
@@ -88,7 +85,7 @@ public class Student extends Person {
 	public Student(Long id, String firstName, String lastName, LocalDate birthDate, Sex sex, String birthPlace,
 			String country, String contact, String email, String registrationId, String regionOfOrigin,
 			String entranceDiploma, String yearOfGraduation, String schoolOfGraduation, String quarter,
-			String diplomaOption, String countryOfGraduation, LanguageLevel frenchLevel, LanguageLevel englishLevel,
+			String countryOfGraduation, LanguageLevel frenchLevel, LanguageLevel englishLevel,
 			String photoPath, Set<Parent> parents, Folder folder) {
 		super(id, firstName, lastName, birthDate, sex, birthPlace, country, contact, email);
 		this.registrationId = registrationId;
@@ -97,7 +94,6 @@ public class Student extends Person {
 		this.yearOfGraduation = yearOfGraduation;
 		this.schoolOfGraduation = schoolOfGraduation;
 		this.quarter = quarter;
-		this.diplomaOption = diplomaOption;
 		this.countryOfGraduation = countryOfGraduation;
 		this.frenchLevel = frenchLevel;
 		this.englishLevel = englishLevel;
@@ -139,7 +135,6 @@ public class Student extends Person {
 		this.setContact(studentEntity.getContact());
 		this.setCountry(studentEntity.getCountry());
 		this.setCountryOfGraduation(studentEntity.getCountryOfGraduation());
-		this.setDiplomaOption(studentEntity.getDiplomaOption());
 		this.setEmail(studentEntity.getEmail());
 		this.setEnglishLevel(studentEntity.getEnglishLevel());
 		this.setEntranceDiploma(studentEntity.getEntranceDiploma());

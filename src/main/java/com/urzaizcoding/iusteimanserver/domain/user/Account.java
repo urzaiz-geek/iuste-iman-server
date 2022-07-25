@@ -14,8 +14,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+
+import com.urzaizcoding.iusteimanserver.domain.Person;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -32,7 +35,7 @@ import lombok.ToString;
 @Data
 @NoArgsConstructor
 @ToString
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = {"owner"})
 public class Account implements Serializable {
 	
 	public static final Long PASSWORD_VALIDITY = 60L; //in days
@@ -73,6 +76,9 @@ public class Account implements Serializable {
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "fk_account_creator_id")
 	private Account creator;
+	
+	@OneToOne(mappedBy = "account", fetch = FetchType.LAZY)
+	private Person owner;
 	
 	@OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<Notification> notifications; 

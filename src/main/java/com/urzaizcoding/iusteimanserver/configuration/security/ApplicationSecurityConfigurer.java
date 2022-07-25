@@ -31,15 +31,11 @@ public class ApplicationSecurityConfigurer {
 
 	private final AccountService accountService;
 
-	private final AppUserAuthenticationSuccessHandler successHandler;
-
 	private final AppConfigurer configurer;
 
-	public ApplicationSecurityConfigurer(AccountService accountService,
-			AppUserAuthenticationSuccessHandler successHandler, AppConfigurer configurer) {
+	public ApplicationSecurityConfigurer(AccountService accountService, AppConfigurer configurer) {
 		super();
 		this.accountService = accountService;
-		this.successHandler = successHandler;
 		this.configurer = configurer;
 	}
 
@@ -66,8 +62,8 @@ public class ApplicationSecurityConfigurer {
 		http.authorizeHttpRequests().mvcMatchers(HttpMethod.GET, "/accounts/refreshToken").permitAll();
 		http.authorizeHttpRequests().mvcMatchers(HttpMethod.GET, "/courses/{id}").permitAll();
 		http.authorizeHttpRequests().mvcMatchers(HttpMethod.POST, "/courses/{id}/registrations").permitAll();
-		http.authorizeHttpRequests().mvcMatchers(HttpMethod.POST, "/students/{studentId}/photo").permitAll();
-		
+		http.authorizeHttpRequests().mvcMatchers(HttpMethod.PATCH, "/students/{studentId}/photo").permitAll();
+
 		http.authorizeHttpRequests().mvcMatchers("/courses/{id}/regitrations/*").hasRole(Role.PRE_STUDENT.name());
 		http.authorizeHttpRequests().mvcMatchers("/courses/*").hasRole(Role.ADMINISTRATOR.name());
 		http.authorizeHttpRequests().mvcMatchers(HttpMethod.GET, "/courses/{id}/folders")
@@ -81,15 +77,17 @@ public class ApplicationSecurityConfigurer {
 
 		http.authorizeHttpRequests().mvcMatchers(HttpMethod.DELETE, "/folders/{folderRegistrationNumber}")
 				.hasRole(Role.ADMINISTRATOR.name());
+		http.authorizeHttpRequests().mvcMatchers(HttpMethod.GET, "/folders/{folderRegistrationNumber}/**")
+				.hasAnyAuthority(Permission.DOWNLOAD_FORM.name(), Permission.DOWNLOAD_FORM.name());
 		http.authorizeHttpRequests().mvcMatchers("/folders/**").hasAnyRole(Role.ADMINISTRATOR.name(),
 				Role.MANAGER.name());
 
 		http.authorizeHttpRequests().anyRequest().authenticated();
 
-		
-		http.addFilterBefore(new JwtAutorisationFilter(configurer), UsernamePasswordAuthenticationFilter.class);
+		http.addFilterBefore(new JWTAutorisationFilter(configurer, accountService),
+				UsernamePasswordAuthenticationFilter.class);
 		http.addFilter(new JWTAuthenticationFilter(authenticationManager, configurer));
-		
+
 		http.authenticationManager(authenticationManager);
 
 		return http.build();

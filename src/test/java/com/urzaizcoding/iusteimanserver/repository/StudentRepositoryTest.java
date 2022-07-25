@@ -50,7 +50,6 @@ class StudentRepositoryTest {
 				.country("Cameroun")
 				.countryOfGraduation("Cameroun")
 				.entranceDiploma("Licence")
-				.diplomaOption("GL")
 				.email("naruffygolen@gmail.com")
 				.englishLevel(LanguageLevel.builder()
 						.readLevel(Level.GOOD)

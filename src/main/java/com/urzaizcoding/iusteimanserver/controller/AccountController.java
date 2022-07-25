@@ -27,6 +27,7 @@ import com.urzaizcoding.iusteimanserver.configuration.security.Token;
 import com.urzaizcoding.iusteimanserver.domain.user.Account;
 import com.urzaizcoding.iusteimanserver.domain.user.Notification;
 import com.urzaizcoding.iusteimanserver.dto.AccountDTO;
+import com.urzaizcoding.iusteimanserver.dto.AccountDTOElevation;
 import com.urzaizcoding.iusteimanserver.dto.AccountDTOIn;
 import com.urzaizcoding.iusteimanserver.dto.NotificationDTO;
 import com.urzaizcoding.iusteimanserver.mappers.MapStructMapper;
@@ -108,31 +109,51 @@ public class AccountController {
 	public ResponseEntity<Page<NotificationDTO>> getAccountNotifications(@RequestParam(defaultValue = "0") Integer page,
 			@RequestParam(defaultValue = "10") Integer size, @PathVariable Long id) throws Exception {
 
-		Page<Notification> notifications = accountService.getAccountNotification(id,page,size);
+		Page<Notification> notifications = accountService.getAccountNotification(id, page, size);
 
 		return ResponseEntity.ok(notifications.map(notification -> mapper.notificationToNotificationDTO(notification)));
 	}
-	
-	@GetMapping(path = {"{id}/notifications/{notifId}"})
-	public ResponseEntity<Notification> getSpecificNotification(@PathVariable Long id, @PathVariable Long notifId) throws Exception {
-		
-		Notification notification = accountService.getSpecificNotification(id,notifId);
+
+	@GetMapping(path = { "{id}/notifications/{notifId}" })
+	public ResponseEntity<Notification> getSpecificNotification(@PathVariable Long id, @PathVariable Long notifId)
+			throws Exception {
+
+		Notification notification = accountService.getSpecificNotification(id, notifId);
 		return ResponseEntity.ok(notification);
 	}
 
 	@GetMapping(path = "/refreshToken")
-	public void refreshToken(HttpServletRequest request,HttpServletResponse response) throws Exception {
-	
+	public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws Exception {
+
 		Token idToken = accountService.refreshToken(request);
-		
-		if(idToken != null) {
+
+		if (idToken != null) {
 			response.setContentType(APPLICATION_JSON);
 			new ObjectMapper().writeValue(response.getOutputStream(), idToken);
-		}else {
+		} else {
 			response.setHeader(ERROR_MESSAGE, "Security exception");
 			response.sendError(HttpServletResponse.SC_FORBIDDEN);
 		}
 	}
-	
-	
+
+	@PatchMapping(path = { "/{id}/elevation" }, consumes = { MediaType.APPLICATION_JSON_VALUE })
+	public ResponseEntity<Token> elevateAccount(@RequestBody @Valid AccountDTOElevation elevationResource,
+			@PathVariable @NotNull Long id) throws Exception {
+
+		Account account = mapper.accountDTOElevationToAccount(elevationResource);
+
+		Token idToken = accountService.elevateAccount(id, account, elevationResource.getOtp());
+
+		return ResponseEntity.ok(idToken);
+
+	}
+
+	@PostMapping(path = { "/{id}/elevation" })
+	public ResponseEntity<Void> attemptElevation(@PathVariable Long id) throws Exception {
+		accountService.attemptElevation(id);
+		
+		return ResponseEntity.ok().build();
+
+	}
+
 }

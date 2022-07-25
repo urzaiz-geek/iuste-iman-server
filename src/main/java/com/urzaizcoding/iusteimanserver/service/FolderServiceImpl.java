@@ -1,6 +1,7 @@
 package com.urzaizcoding.iusteimanserver.service;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -17,11 +18,17 @@ import com.urzaizcoding.iusteimanserver.domain.registration.Folder;
 import com.urzaizcoding.iusteimanserver.domain.registration.Part;
 import com.urzaizcoding.iusteimanserver.domain.registration.student.Student;
 import com.urzaizcoding.iusteimanserver.domain.user.Account;
+import com.urzaizcoding.iusteimanserver.domain.user.Notification;
 import com.urzaizcoding.iusteimanserver.exception.ResourceNotFoundException;
 import com.urzaizcoding.iusteimanserver.repository.FolderRepository;
+import com.urzaizcoding.iusteimanserver.utils.RandomStringGenerator;
 
 @Service
 public class FolderServiceImpl implements FolderService {
+
+	private static final String WELCOME = "Bienvenue";
+
+	private static final String WELCOME_MESSAGE = "Félicitations vous avez été accepté comme étudiant dans notre établissement vous pouvez désormais accéder aux différentes fonctionnalités de notre plateforme et vous rapprocher de l'établissement pour bénéficier des cours";
 
 	private static String NAME_FORMAT = "part_f%d_%s";
 
@@ -34,7 +41,8 @@ public class FolderServiceImpl implements FolderService {
 	private final AccountService accountService;
 
 	public FolderServiceImpl(FolderRepository folderRepository, MailNotificationService mailNotificationService,
-			ImageStorageService storageService, PDFGeneratorService pdfGeneratorService, AccountService accountService) {
+			ImageStorageService storageService, PDFGeneratorService pdfGeneratorService,
+			AccountService accountService) {
 		super();
 		this.folderRepository = folderRepository;
 		this.mailNotificationService = mailNotificationService;
@@ -67,26 +75,27 @@ public class FolderServiceImpl implements FolderService {
 
 		// create user account
 
-		
 		Student student = folderEntity.getStudent();
-		
-		Account account = Account.builder()
-				.username(student.getEmail())
-				.password(AccountService.randPassword(10))
-				.build();
 
-		accountService.saveAccount(account, null); //we have to save it ourself to encrypt password
+		Account account = Account.builder().username(student.getEmail())
+				.password(RandomStringGenerator.numbersString(3)).build();
+
+		accountService.saveAccount(account, null); // we have to save it ourself to encrypt password
 		student.setAccount(account);
 
 		// create student registration number
 
 		student.setRegistrationId(Student.generateStudentRegistrationId());
-		
-		
 
 		// send email to user to tel him that he has been accepted
 
 		mailNotificationService.sendAcceptanceEmail(student);
+
+		// send him notification
+		student.getAccount().addNotification(Notification.builder().issuedDate(LocalDate.now())
+				.subject(WELCOME)
+				.content(WELCOME_MESSAGE)
+				.build());
 
 		return folderEntity;
 	}
@@ -135,18 +144,20 @@ public class FolderServiceImpl implements FolderService {
 				.orElseThrow(() -> new ResourceNotFoundException(
 						String.format("The folder referenced by the registration number %s does not exists",
 								folderRegistrationNumber)));
-		
+
 		FileSpec file = pdfGeneratorService.generateForm(folder);
-		
+
 		return file;
 	}
 
 	@Override
-	public FileSpec generateQuitus(@NotNull @NotBlank String folderRegistrationNumber, @NotNull Long quitusId) throws Exception{
-		Folder folder = folderRepository.findByFolderRegistrationNumber(folderRegistrationNumber).orElseThrow(() -> new ResourceNotFoundException(
+	public FileSpec generateQuitus(@NotNull @NotBlank String folderRegistrationNumber, @NotNull Long quitusId)
+			throws Exception {
+		Folder folder = folderRepository.findByFolderRegistrationNumber(folderRegistrationNumber)
+				.orElseThrow(() -> new ResourceNotFoundException(
 						String.format("The folder referenced by the registration number %s does not exists",
 								folderRegistrationNumber)));
-		
+
 		return pdfGeneratorService.generateQuitus(folder, quitusId);
 	}
 
@@ -194,7 +205,8 @@ public class FolderServiceImpl implements FolderService {
 
 			@Override
 			public String fileName() {
-				return String.format(NAME_FORMAT, newPart.getFolder().getId(), formater.format(newPart.getUploadDate()));
+				return String.format(NAME_FORMAT, newPart.getFolder().getId(),
+						formater.format(newPart.getUploadDate()));
 			}
 
 			@Override

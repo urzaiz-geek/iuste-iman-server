@@ -38,18 +38,20 @@ public class JWTAuthenticationProvider {
 	private static final String AUTHORIZATION_HEADER = "Authorization";
 	private static final String PREFIX = "Bearer ";
 	private static final String ROLE_CLAIM = "permissions";
-	private static final Long ACCESS_TOKEN_VALIDITY = 5L * 60 * 1000; // 5 minits
+	private static final Long ACCESS_TOKEN_VALIDITY = 15L * 60 * 1000; // 5 minits
 	private static final Long REFRESH_TOKEN_VALIDITY = 30 * 24 * 3600 * 1000L; // 30 days
 
 	private Algorithm algorithm;
+	private String issuer;
 
 	public JWTAuthenticationProvider(AppConfigurer configurer) {
 		super();
 		algorithm = Algorithm.HMAC512(configurer.getSecretKey().getBytes());
+		issuer = configurer.getJwtIssuer();
 
 	}
 
-	public String createAccessToken(UserDetails user, String issuer) {
+	public String createAccessToken(UserDetails user) {
 
 		String accessToken = JWT.create().withSubject(user.getUsername()).withIssuer(issuer).withIssuedAt(new Date())
 				.withExpiresAt(new Date(System.currentTimeMillis() + ACCESS_TOKEN_VALIDITY))
@@ -87,7 +89,7 @@ public class JWTAuthenticationProvider {
 		}
 	}
 
-	public String createRefreshToken(String subject, String issuer) throws TokenException {
+	public String createRefreshToken(String subject) throws TokenException {
 
 		try {
 			return JWT.create().withSubject(subject).withIssuer(issuer).withIssuedAt(new Date())

@@ -10,7 +10,6 @@ import lombok.Getter;
 
 @Getter
 public class AccountDTOIn {
-	private Long id;
 
 	@NotBlank
 	private final String username;
@@ -25,10 +24,9 @@ public class AccountDTOIn {
 	private final Long ownerId;
 
 	@Builder
-	public AccountDTOIn(Long id, @NotBlank String username, @NotBlank String password, boolean active,
+	public AccountDTOIn(@NotBlank String username, @NotBlank String password, boolean active,
 			@NotNull Role role, Long owner) {
 		super();
-		this.id = id;
 		this.username = username;
 		this.password = password;
 		this.active = active;

@@ -71,9 +71,9 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
 		JWTAuthenticationProvider provider = JWTAuthenticationProvider.getProvider(configurer);
 		
-		String accessToken = provider.createAccessToken(user, request.getRequestURL().toString());
+		String accessToken = provider.createAccessToken(user);
 		
-		String refreshToken = provider.createRefreshToken(user.getUsername(), request.getRequestURL().toString());
+		String refreshToken = provider.createRefreshToken(user.getUsername());
 		
 		Map<String,String> idToken = new HashMap<>();
 		

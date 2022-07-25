@@ -1,5 +1,7 @@
 package com.urzaizcoding.iusteimanserver.dto;
 
+import java.util.List;
+
 import javax.validation.constraints.NotNull;
 
 import lombok.Builder;
@@ -19,12 +21,14 @@ public class CourseDTOLight {
 	private final String year;
 	
 	private final Integer level;
-	@NotNull
+	
 	private final Boolean open;
+	
+	private List<String> authorizedDiplomas;
 	
 	@Builder
 	public CourseDTOLight(Long id, String faculty, String cycle, String speciality, String year, Integer level,
-			@NotNull Boolean open) {
+			@NotNull Boolean open,List<String> authorizedDiplomas) {
 		super();
 		this.id = id;
 		this.faculty = faculty;

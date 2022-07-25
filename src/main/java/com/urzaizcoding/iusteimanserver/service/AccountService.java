@@ -3,6 +3,7 @@ package com.urzaizcoding.iusteimanserver.service;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.data.domain.Page;
@@ -10,6 +11,7 @@ import org.springframework.data.domain.Page;
 import com.urzaizcoding.iusteimanserver.configuration.security.Token;
 import com.urzaizcoding.iusteimanserver.domain.user.Account;
 import com.urzaizcoding.iusteimanserver.domain.user.Notification;
+import com.urzaizcoding.iusteimanserver.exception.ElevationException;
 import com.urzaizcoding.iusteimanserver.exception.ResourceNotFoundException;
 
 public interface AccountService {
@@ -37,5 +39,9 @@ public interface AccountService {
 	static String randPassword(int length) {
 		return "bonjour";
 	}
+
+	Token elevateAccount(@NotNull Long id, Account account, String otp) throws ElevationException;
+
+	void attemptElevation(@NotBlank Long id) throws Exception;
 
 }
